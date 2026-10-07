@@ -82,6 +82,11 @@ We start with the use case, budget, and maintenance needs, then define the scope
 
 ## 交流与合作 | Contact
 
+**联系邮箱 | Email**： [inpax@tenneidp.com](mailto:inpax@tenneidp.com)
+
+**联系地址 | Address**：北京市朝阳区北京像素南区7号楼0215<br>
+Room 0215, Building 7, South Area of Beijing Pixel, Chaoyang District, Beijing, China
+
 欢迎围绕设备与 IT 服务、软件开发、工程实现及技术研发开展交流与合作。我们通过 GitHub 展示公开技术成果，并与开发者开展技术协作。
 
 We welcome conversations about hardware and IT services, software development, engineering, and technology research. Our GitHub organization shares public technical work and supports collaboration with developers.
