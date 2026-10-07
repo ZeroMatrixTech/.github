@@ -33,7 +33,7 @@ Building on computer sales and after-sales support, we are expanding into enterp
 
 ### 周劼 | Zhou Jie
 
-**联合创始人、CEO · Co-founder, CEO**
+**联合创始人、Co-founder, CEO**
 
 负责公司整体战略、产品方向、核心技术架构与跨业务协调。
 
@@ -41,7 +41,7 @@ Responsible for overall strategy, product direction, core technology architectur
 
 ### 贾东明 | Jia Dongming
 
-**联合创始人、CTO · Co-founder, CTO**
+**联合创始人、Co-founder, CTO**
 
 负责技术研发、工程实现、软件质量、测试、部署与技术协作。
 
@@ -49,7 +49,7 @@ Responsible for technology development, engineering implementation, software qua
 
 ### 罗建华 | Luo Jianhua
 
-**联合创始人、CFO · Co-founder, CFO**
+**联合创始人、Co-founder, CFO**
 
 负责预算、现金流、成本控制、经营分析、资本规划以及外部财税事务协调。
 
