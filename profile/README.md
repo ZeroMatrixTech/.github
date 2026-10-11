@@ -95,6 +95,10 @@ We welcome conversations about hardware and IT services, software development, e
 
 For open-source feedback and technical discussions, use the relevant repository's Issues and review its contribution guidelines before contributing.
 
+本公司在包括但不限于文档编辑、项目管理、漏洞修复、对抗测试和项目优化中大量采用生成式人工智能技术，并在验收阶段采用人工核查，请您谨慎审阅本公司的开源项目，如有疏漏，请您不吝赐教。(本条目适用于所有本公司开源项目)
+
+Our company extensively employs generative artificial intelligence technology in areas including but not limited to document editing, project management, vulnerability patching, adversarial testing, and project optimization. We also use manual verification during the acceptance phase. Please carefully review our open-source projects, and feel free to point out any omissions. (This entry applies to all open-source projects of this company.)
+
 **[GitHub · ZeroMatrixTech](https://github.com/ZeroMatrixTech)** · **[公开仓库 | Public Repositories](https://github.com/orgs/ZeroMatrixTech/repositories)**
 
 ---
