@@ -9,7 +9,9 @@
 从设备到系统，让技术服务于实际需求。  
 *Technology for practical needs, from devices to systems.*
 
-[About](#about) · [Team](#team) · [Capabilities](#capabilities) · [Contact](#contact)
+[About](#about) · [Projects](#projects) · [Team](#team) · [Capabilities](#capabilities) · [Contact](#contact)
+
+**[▶ 项目导航与在线演示 | Project Hub](https://zeromatrixtech.github.io/.github/)**
 
 </div>
 
@@ -26,6 +28,19 @@ ZeroMatrixTech 是北京凌矩阵科技有限责任公司的对外技术品牌�
 ZeroMatrixTech is the outward-facing technology brand of 北京凌矩阵科技有限责任公司. The team has backgrounds in computer science, computational science, electronic engineering, information engineering, and related technical fields. The company operates with a lean, project-driven structure focused on technology development, engineering implementation, product development, and business exploration.
 
 Building on computer sales and after-sales support, we are expanding into enterprise IT services, software development, and technical services, with a focus on practical needs, clear deliverables, and ongoing maintenance.
+
+<a id="projects"></a>
+
+## 项目 | Projects
+
+| 项目 · Project | 简介 · Summary | 状态 · Status |
+| --- | --- | --- |
+| **ACLt Protocol** | 面向异构、无许可分布式计算的开放协议。[像素动画导览](https://zeromatrixtech.github.io/.github/demos/aclt-theater.html)<br>An open protocol for permissionless distributed computing. | G0 协议规格化（仓库暂未公开） |
+| **[ReachTerminal](https://github.com/ZeroMatrixTech/ReachTerminal)** | 开源、自托管的投资研究终端。[在线演示](https://zeromatrixtech.github.io/.github/demos/reachterminal/)<br>Self-hosted investment research terminal. | v0.1.0 alpha |
+| **[ubuntu_ZeroMatrix](https://github.com/ZeroMatrixTech/ubuntu_ZeroMatrix)** | Ubuntu 26.04.1 LTS 开发系统镜像。[安装演示](https://zeromatrixtech.github.io/.github/demos/ubuntu-zeromatrix/)<br>Ubuntu-based development system image. | 0.2.0-rc3 验收中 |
+| **[MathPicasso](https://github.com/ZeroMatrixTech/MathPicasso)** | 用数学函数画画（MATLAB）。[函数画板](https://zeromatrixtech.github.io/.github/demos/mathpicasso/)<br>Drawing with mathematical functions. | 示例作品 |
+
+四个在线演示都在浏览器里直接运行。完整的项目卡片、演示入口和文档链接见 [项目导航页](https://zeromatrixtech.github.io/.github/)。
 
 <a id="team"></a>
 

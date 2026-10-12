@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MathPicasso 函数画板</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@700&display=swap">
+<style>
+/* Layout: graph paper canvas on the left, formula list and controls on the right; the canvas is the hero. Light "graph paper" look with a dark counterpart. */
+:root{--bg:#F1F0EC;--paper:#FBFBF8;--grid:#E3E1DA;--grid2:#CFCCC2;--ink:#1C1D21;--muted:#6B6E76;--line:#D9D6CE;--accent:#B5482A;--chip:#FFFFFF;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;--body:"Noto Sans SC","PingFang SC",system-ui,sans-serif;--display:"Noto Serif SC",serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121317;--paper:#17181D;--grid:#23252C;--grid2:#30333B;--ink:#E9E7E1;--muted:#9A9DA6;--line:#2C2F37;--accent:#F08A62;--chip:#1D1F25;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121317;--paper:#17181D;--grid:#23252C;--grid2:#30333B;--ink:#E9E7E1;--muted:#9A9DA6;--line:#2C2F37;--accent:#F08A62;--chip:#1D1F25;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6}
+.wrap{max-width:1200px;margin:0 auto;padding-inline:20px;padding-block:22px 48px}
+.top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.top a{color:var(--muted);text-decoration:none;font-size:14px}
+.top a:hover{color:var(--ink)}
+h1{font-family:var(--display);font-size:28px;margin:0 auto 0 0}
+.lede{color:var(--muted);margin:0 0 16px;max-width:70ch}
+.main{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;align-items:start}
+.board{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+canvas{display:block;width:100%;aspect-ratio:4/3;max-width:100%}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;border-top:1px solid var(--line)}
+.bar label{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+button,.seg button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:8px;padding:5px 11px;cursor:pointer}
+button.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.seg{display:inline-flex}
+.seg button{border-radius:0}.seg button:first-child{border-radius:8px 0 0 8px}.seg button:last-child{border-radius:0 8px 8px 0;margin-left:-1px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+input[type=range]{accent-color:var(--accent)}
+.num{font-family:var(--mono);font-size:12px;color:var(--ink);min-width:3.5em}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
+.panel h2{font-size:16px;margin:0 0 8px;display:flex;justify-content:space-between;align-items:baseline}
+.panel h2 small{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:400}
+.list{list-style:none;margin:0;padding:0;max-height:430px;overflow:auto;display:grid;gap:2px}
+.list li{display:grid;grid-template-columns:22px 12px minmax(0,1fr);gap:8px;align-items:baseline;padding:4px 6px;border-radius:6px;font-family:var(--mono);font-size:12.5px;cursor:default}
+.list li:hover,.list li.on{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.list li.off{opacity:.38}
+.list .i{color:var(--muted);text-align:right}
+.list .sw{width:10px;height:10px;border-radius:3px;align-self:center}
+.list .f{overflow-wrap:anywhere}
+.list .d{color:var(--muted);display:block;font-size:11.5px}
+.try{display:grid;gap:8px;margin-top:14px}
+.try .row{display:flex;gap:8px}
+.try input[type=text]{flex:1;min-width:0;font-family:var(--mono);font-size:13px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--chip);color:var(--ink)}
+.err{color:var(--accent);font-size:12.5px;min-height:1.2em;margin:0}
+.hint{color:var(--muted);font-size:12.5px;margin:0}
+.note{margin-top:16px;color:var(--muted);font-size:13px;max-width:90ch}
+@media (max-width:900px){.main{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a href="../../index.html#mathpicasso">← 项目导航</a></div>
+  <div class="top"><h1>MathPicasso 函数画板</h1></div>
+  <p class="lede">每一笔都是一条数学公式：在定义域里按固定点数采样，再连成曲线。和 MATLAB 版一样，可以逐条动画、切换彩色与墨线、开关坐标网格、调整采样点数。下面这幅《灯塔与海》是为本页原创的示例，共 <span id="count">0</span> 条公式。</p>
+  <div class="main">
+    <div class="board">
+      <canvas id="cv" role="img" aria-label="由函数曲线组成的灯塔与海"></canvas>
+      <div class="bar">
+        <button class="primary" id="anim" type="button">▶ 逐条绘制</button>
+        <div class="seg" role="group" aria-label="配色"><button type="button" data-pal="color" aria-pressed="true">彩色</button><button type="button" data-pal="ink" aria-pressed="false">墨线</button></div>
+        <label><input type="checkbox" id="grid" checked> 网格</label>
+        <label>采样 <input type="range" id="samples" min="20" max="4000" step="10" value="1600"><span class="num" id="sn">1600</span></label>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>公式 <small>悬停高亮 · 点击隐藏</small></h2>
+      <ul class="list" id="list"></ul>
+      <div class="try">
+        <h2 style="margin:6px 0 0">试试你的公式</h2>
+        <div class="row"><input type="text" id="expr" value="y = 6 + 0.4*sin(3*x)" aria-label="输入公式"><button type="button" id="add">添加</button></div>
+        <div class="row"><input type="text" id="dom" value="-10, 10" aria-label="定义域" style="max-width:140px"><span class="hint" style="align-self:center">定义域 a, b</span></div>
+        <p class="err" id="err"></p>
+        <p class="hint">支持 <code>y = f(x)</code> 或 <code>x = f(y)</code>，可用 + − * / ^、sin cos tan abs sqrt exp log log10、pi。画布范围 x ∈ [−10, 10]，y ∈ [−6, 9]。</p>
+      </div>
+    </div>
+  </div>
+  <p class="note">MathPicasso 仓库里的 Osage 示例改编自第三方作品，授权尚未确认，因此不在本页展示。本页只演示绘制原理；MATLAB 版还能导出 PNG、PDF 矢量图和可编辑的 FIG。</p>
+</div>
+<script>
+(() => {
+"use strict";
+/* ---------- tiny safe expression parser (no eval) ---------- */
+function compile(src, v) {
+  const toks = src.match(/\d+\.?\d*(?:e[+-]?\d+)?|\.\d+|[a-z]+\d*|[()+\-*/^,]|\S/gi) || [];
+  let i = 0;
+  const peek = () => toks[i], eat = t => { if (toks[i] !== t) throw new Error(`需要 “${t}”`); i++; };
+  const F = { sin: Math.sin, cos: Math.cos, tan: Math.tan, abs: Math.abs, sqrt: Math.sqrt, exp: Math.exp, log: Math.log, log10: Math.log10, asin: Math.asin, acos: Math.acos, atan: Math.atan, sign: Math.sign };
+  function expr() { let a = term(); while (peek() === "+" || peek() === "-") { const op = toks[i++], b = term(), l = a; a = op === "+" ? s => l(s) + b(s) : s => l(s) - b(s); } return a; }
+  function term() { let a = unary(); while (peek() === "*" || peek() === "/") { const op = toks[i++], b = unary(), l = a; a = op === "*" ? s => l(s) * b(s) : s => l(s) / b(s); } return a; }
+  function unary() { if (peek() === "-") { i++; const a = unary(); return s => -a(s); } if (peek() === "+") { i++; return unary(); } return power(); }
+  function power() { const b = atom(); if (peek() === "^") { i++; const e = unary(); return s => Math.pow(b(s), e(s)); } return b; }
+  function atom() {
+    const t = toks[i++]; if (t === undefined) throw new Error("公式不完整");
+    if (/^[\d.]/.test(t)) { const n = parseFloat(t); return () => n; }
+    if (t === "(") { const a = expr(); eat(")"); return a; }
+    const k = t.toLowerCase();
+    if (k === v) return s => s;
+    if (k === "pi") return () => Math.PI;
+    if (k === "e") return () => Math.E;
+    if (F[k]) { eat("("); const a = expr(); eat(")"); const f = F[k]; return s => f(a(s)); }
+    throw new Error(`不认识 “${t}”`);
+  }
+  const f = expr(); if (i < toks.length) throw new Error(`多余的 “${toks[i]}”`); return f;
+}
+function parse(line, dom) {
+  const m = line.replace(/\s+/g, " ").trim().match(/^([xy])\s*=\s*(.+)$/i);
+  if (!m) throw new Error("请写成 y = … 或 x = …");
+  const lhs = m[1].toLowerCase(), v = lhs === "y" ? "x" : "y", f = compile(m[2], v);
+  const d = dom.split(",").map(s => parseFloat(s)); if (d.length !== 2 || !d.every(Number.isFinite) || d[0] >= d[1]) throw new Error("定义域写成 a, b，且 a < b");
+  f((d[0] + d[1]) / 2);
+  return { kind: lhs === "y" ? "yx" : "xy", f, a: d[0], b: d[1] };
+}
+
+/* ---------- 《灯塔与海》：original example, 27 formulas ---------- */
+const P = { sun: "#E8973A", sun2: "#F2C26B", mtn1: "#7C6FB0", mtn2: "#5A7FB2", snow: "#9AA3B5", sea: "#4FA3B8", wave: "#2E8B9A", wave2: "#1F6F7E", lh: "#B5482A", lh2: "#E9E7E1", beam: "#F2C26B", boat: "#8A5A3C", sail: "#C9B79A", bird: "#3A3D46", glint: "#E8973A" };
+const ART = [
+  ["x = 5 + 1.1 cos t,  y = 6.4 + 1.1 sin t", "t ∈ [0, 2π]", "p", t => 5 + 1.1 * Math.cos(t), t => 6.4 + 1.1 * Math.sin(t), 0, 2 * Math.PI, P.sun],
+  ["r = 1.55 + 0.18 sin 12t（中心 5, 6.4）", "t ∈ [0, 2π]", "p", t => 5 + (1.55 + .18 * Math.sin(12 * t)) * Math.cos(t), t => 6.4 + (1.55 + .18 * Math.sin(12 * t)) * Math.sin(t), 0, 2 * Math.PI, P.sun2],
+  ["y = 4.2 − 0.84|x + 5|", "x ∈ [−10, 0]", "yx", x => 4.2 - .84 * Math.abs(x + 5), null, -10, 0, P.mtn1],
+  ["y = 3.25 + 0.2 cos(14.07(x + 5))", "x ∈ [−5.89, −4.11]", "yx", x => 3.25 + .2 * Math.cos(14.07 * (x + 5)), null, -5.893, -4.107, P.snow],
+  ["y = 2.9 − 0.72|x + 1|", "x ∈ [−5, 3]", "yx", x => 2.9 - .72 * Math.abs(x + 1), null, -5, 3, P.mtn2],
+  ["y = 0", "x ∈ [−10, 10]", "yx", () => 0, null, -10, 10, P.sea],
+  ["y = −0.9 + 0.22 sin 2x", "x ∈ [−10, 10]", "yx", x => -.9 + .22 * Math.sin(2 * x), null, -10, 10, P.wave],
+  ["y = −2.1 + 0.3 sin(1.6x + 1)", "x ∈ [−10, 10]", "yx", x => -2.1 + .3 * Math.sin(1.6 * x + 1), null, -10, 10, P.wave],
+  ["y = −3.4 + 0.35 sin(1.3x + 2)", "x ∈ [−10, 10]", "yx", x => -3.4 + .35 * Math.sin(1.3 * x + 2), null, -10, 10, P.wave2],
+  ["y = −4.7 + 0.4 sin(x + 3)", "x ∈ [−10, 10]", "yx", x => -4.7 + .4 * Math.sin(x + 3), null, -10, 10, P.wave2],
+  ["x = 6.7 + 0.1y", "y ∈ [0, 4]", "xy", y => 6.7 + .1 * y, null, 0, 4, P.lh],
+  ["x = 8.3 − 0.1y", "y ∈ [0, 4]", "xy", y => 8.3 - .1 * y, null, 0, 4, P.lh],
+  ["y = 1.3", "x ∈ [6.83, 8.17]", "yx", () => 1.3, null, 6.83, 8.17, P.lh],
+  ["y = 2.6", "x ∈ [6.96, 8.04]", "yx", () => 2.6, null, 6.96, 8.04, P.lh],
+  ["y = 4", "x ∈ [6.9, 8.1]", "yx", () => 4, null, 6.9, 8.1, P.lh],
+  ["x = 7.15,  x = 7.85", "y ∈ [4, 4.8]", "xy2", y => 7.15, y => 7.85, 4, 4.8, P.lh],
+  ["y = 5.5 − 1.2|x − 7.5|", "x ∈ [6.9, 8.1]", "yx", x => 5.5 - 1.2 * Math.abs(x - 7.5), null, 6.9, 8.1, P.lh],
+  ["y = 4.4 + 0.16(x − 7.5)", "x ∈ [1.5, 7.1]", "yx", x => 4.4 + .16 * (x - 7.5), null, 1.5, 7.1, P.beam],
+  ["y = 4.4 − 0.1(x − 7.5)", "x ∈ [1.5, 7.1]", "yx", x => 4.4 - .1 * (x - 7.5), null, 1.5, 7.1, P.beam],
+  ["y = −1.35 + 0.28(x + 4)²", "x ∈ [−5.3, −2.7]", "yx", x => -1.35 + .28 * (x + 4) ** 2, null, -5.3, -2.7, P.boat],
+  ["y = −0.88", "x ∈ [−5.3, −2.7]", "yx", () => -.877, null, -5.3, -2.7, P.boat],
+  ["x = −4", "y ∈ [−0.88, 2]", "xy", () => -4, null, -.88, 2, P.boat],
+  ["y = 2 − 1.15(x + 4)", "x ∈ [−4, −2.5]", "yx", x => 2 - 1.15 * (x + 4), null, -4, -2.5, P.sail],
+  ["y = 0.28", "x ∈ [−4, −2.5]", "yx", () => .275, null, -4, -2.5, P.sail],
+  ["y = 6 + 0.45√|x + 2|", "x ∈ [−2.8, −1.2]", "yx", x => 6 + .45 * Math.sqrt(Math.abs(x + 2)), null, -2.8, -1.2, P.bird],
+  ["y = 7 + 0.35√|x − 0.4|", "x ∈ [−0.2, 1]", "yx", x => 7 + .35 * Math.sqrt(Math.abs(x - .4)), null, -.2, 1, P.bird],
+  ["y = −0.45,  y = −1.25（倒影）", "x ∈ [4.2, 5.8]", "yy2", () => -.45, () => -1.25, 4.2, 5.8, P.glint],
+];
+const items = ART.map(([label, dom, kind, f, g, a, b, col]) => ({ label, dom, kind, f, g, a, b, col, on: true }));
+document.getElementById("count").textContent = items.length;
+
+/* ---------- drawing ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+const XR = [-10, 10], YR = [-6, 9];
+let palette = "color", showGrid = true, samples = 1600, hover = -1, prog = 1e9, t0 = 0, playing = false;
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function pts(it) {
+  const N = Math.max(2, samples), out = [[], []];
+  for (let k = 0; k <= N; k++) {
+    const s = it.a + (it.b - it.a) * k / N;
+    if (it.kind === "yx") out[0].push([s, it.f(s)]);
+    else if (it.kind === "xy") out[0].push([it.f(s), s]);
+    else if (it.kind === "xy2") { out[0].push([it.f(s), s]); out[1].push([it.g(s), s]); }
+    else if (it.kind === "yy2") { out[0].push([s, it.f(s)]); out[1].push([s, it.g(s)]); }
+    else out[0].push([it.f(s), it.g(s)]);
+  }
+  return out.filter(p => p.length);
+}
+function draw(now) {
+  const w = cv.clientWidth, h = cv.clientHeight, d = Math.min(devicePixelRatio || 1, 2);
+  if (cv.width !== Math.round(w * d) || cv.height !== Math.round(h * d)) { cv.width = Math.round(w * d); cv.height = Math.round(h * d); }
+  ctx.setTransform(d, 0, 0, d, 0, 0);
+  ctx.fillStyle = css("--paper"); ctx.fillRect(0, 0, w, h);
+  const sx = x => (x - XR[0]) / (XR[1] - XR[0]) * w, sy = y => h - (y - YR[0]) / (YR[1] - YR[0]) * h;
+  if (showGrid) {
+    for (let x = XR[0]; x <= XR[1]; x += .5) { ctx.strokeStyle = Number.isInteger(x) ? css("--grid2") : css("--grid"); ctx.lineWidth = x === 0 ? 1.4 : 1; ctx.beginPath(); ctx.moveTo(Math.round(sx(x)) + .5, 0); ctx.lineTo(Math.round(sx(x)) + .5, h); ctx.stroke(); }
+    for (let y = YR[0]; y <= YR[1]; y += .5) { ctx.strokeStyle = Number.isInteger(y) ? css("--grid2") : css("--grid"); ctx.lineWidth = y === 0 ? 1.4 : 1; ctx.beginPath(); ctx.moveTo(0, Math.round(sy(y)) + .5); ctx.lineTo(w, Math.round(sy(y)) + .5); ctx.stroke(); }
+    ctx.fillStyle = css("--muted"); ctx.font = `11px ${css("--mono") || "monospace"}`;
+    for (let x = -8; x <= 8; x += 4) ctx.fillText(String(x), sx(x) + 3, sy(0) + 13);
+    for (let y = -4; y <= 8; y += 4) if (y) ctx.fillText(String(y), sx(0) + 4, sy(y) - 3);
+  }
+  const per = 0.32, elapsed = playing ? (now - t0) / 1000 : 1e9;
+  items.forEach((it, idx) => {
+    if (!it.on) return;
+    const local = playing ? Math.min(1, Math.max(0, (elapsed - idx * per) / per)) : 1; if (local <= 0) return;
+    const col = palette === "ink" ? css("--ink") : it.col;
+    ctx.strokeStyle = col; ctx.lineWidth = idx === hover ? 3.4 : palette === "ink" ? 1.4 : 2; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    for (const path of pts(it)) {
+      const n = Math.max(1, Math.floor((path.length - 1) * local));
+      ctx.beginPath(); let pen = false;
+      for (let k = 0; k <= n; k++) { const [x, y] = path[k]; if (!Number.isFinite(x) || !Number.isFinite(y)) { pen = false; continue; } pen ? ctx.lineTo(sx(x), sy(y)) : ctx.moveTo(sx(x), sy(y)); pen = true; }
+      ctx.stroke();
+    }
+    li[idx] && li[idx].classList.toggle("on", playing && local > 0 && local < 1 || idx === hover);
+  });
+  if (playing && elapsed > items.length * per + per) { playing = false; li.forEach((l, i) => l.classList.toggle("on", i === hover)); document.getElementById("anim").textContent = "▶ 逐条绘制"; }
+  if (playing) requestAnimationFrame(draw);
+}
+const redraw = () => { if (!playing) requestAnimationFrame(draw); };
+
+/* ---------- list & controls ---------- */
+const list = document.getElementById("list"); let li = [];
+function renderList() {
+  list.innerHTML = ""; li = items.map((it, idx) => {
+    const el = document.createElement("li"); if (!it.on) el.classList.add("off");
+    const i = document.createElement("span"); i.className = "i"; i.textContent = idx + 1;
+    const sw = document.createElement("span"); sw.className = "sw"; sw.style.background = it.col;
+    const f = document.createElement("span"); f.className = "f"; f.textContent = it.label; const dd = document.createElement("span"); dd.className = "d"; dd.textContent = it.dom; f.append(dd);
+    el.append(i, sw, f); el.title = "点击隐藏 / 显示";
+    el.addEventListener("mouseenter", () => { hover = idx; redraw(); }); el.addEventListener("mouseleave", () => { hover = -1; redraw(); });
+    el.addEventListener("click", () => { it.on = !it.on; el.classList.toggle("off", !it.on); redraw(); });
+    list.append(el); return el;
+  });
+  document.getElementById("count").textContent = items.length;
+}
+renderList();
+document.getElementById("anim").addEventListener("click", e => { playing = true; t0 = performance.now(); e.currentTarget.textContent = "⟳ 绘制中…"; requestAnimationFrame(draw); });
+document.querySelectorAll("[data-pal]").forEach(b => b.addEventListener("click", () => { palette = b.dataset.pal; document.querySelectorAll("[data-pal]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); redraw(); }));
+document.getElementById("grid").addEventListener("change", e => { showGrid = e.target.checked; redraw(); });
+document.getElementById("samples").addEventListener("input", e => { samples = +e.target.value; document.getElementById("sn").textContent = samples; redraw(); });
+const COLORS = ["#B5482A", "#2E8B9A", "#7C6FB0", "#E8973A", "#3E7D4F"]; let added = 0;
+document.getElementById("add").addEventListener("click", () => {
+  const err = document.getElementById("err");
+  try {
+    const src = document.getElementById("expr").value, p = parse(src, document.getElementById("dom").value);
+    items.push({ label: src.trim(), dom: (p.kind === "yx" ? "x" : "y") + ` ∈ [${p.a}, ${p.b}]`, kind: p.kind, f: p.f, a: p.a, b: p.b, col: COLORS[added++ % COLORS.length], on: true });
+    err.textContent = ""; renderList(); redraw(); list.scrollTop = list.scrollHeight;
+  } catch (e) { err.textContent = e.message; }
+});
+document.getElementById("expr").addEventListener("keydown", e => { if (e.key === "Enter") document.getElementById("add").click(); });
+new ResizeObserver(redraw).observe(cv);
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redraw);
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches) { playing = true; t0 = performance.now(); document.getElementById("anim").textContent = "⟳ 绘制中…"; }
+requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ZeroMatrixTech 项目导航</title>
+<meta name="description" content="ZeroMatrixTech（北京凌矩阵科技有限责任公司）的项目导航与在线演示。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@700;900&display=swap">
+<style>
+/* Layout: sticky bar, a two-column hero with a live dot-matrix, a filterable 2-up project grid, a featured demo, then about/contact. */
+:root{
+  --bg:#F3F5F7; --surface:#FFFFFF; --ink:#141820; --muted:#5A6371; --line:#DCE1E7; --accent:#0C7A69; --accent-soft:#E0F2EE; --warm:#D9673A;
+  --t-research:#6A4FC7; --t-research-bg:#EEEAFB; --t-alpha:#9A5B00; --t-alpha-bg:#FCEFD9; --t-rc:#1F5FAD; --t-rc-bg:#E2ECF9; --t-stable:#167A4A; --t-stable-bg:#DDF3E6; --t-exp:#A33E74; --t-exp-bg:#F8E4EF;
+  --display:"Noto Serif SC","Songti SC",serif; --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1015; --surface:#151A21; --ink:#E7EBF0; --muted:#94A0AF; --line:#27303B; --accent:#3BCBB1; --accent-soft:#12302B; --warm:#F0895B;
+  --t-research:#B9A6FF; --t-research-bg:#251D42; --t-alpha:#F4C26B; --t-alpha-bg:#3A2A0C; --t-rc:#8DB8F2; --t-rc-bg:#14273F; --t-stable:#7FD8A6; --t-stable-bg:#10301F; --t-exp:#F29CC8; --t-exp-bg:#3A1529; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0D1015; --surface:#151A21; --ink:#E7EBF0; --muted:#94A0AF; --line:#27303B; --accent:#3BCBB1; --accent-soft:#12302B; --warm:#F0895B;
+  --t-research:#B9A6FF; --t-research-bg:#251D42; --t-alpha:#F4C26B; --t-alpha-bg:#3A2A0C; --t-rc:#8DB8F2; --t-rc-bg:#14273F; --t-stable:#7FD8A6; --t-stable-bg:#10301F; --t-exp:#F29CC8; --t-exp-bg:#3A1529; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.65}
+a{color:inherit}
+img{max-width:100%;display:block}
+[hidden]{display:none!important}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:20px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+/* bar */
+.bar{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;gap:20px;min-height:60px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;letter-spacing:.01em}
+.mark{display:grid;grid-template-columns:repeat(3,6px);gap:2px}
+.mark i{width:6px;height:6px;border-radius:1.5px;background:var(--line)}
+.mark i:nth-child(5){background:var(--accent)}
+.mark i:nth-child(3),.mark i:nth-child(7){background:var(--muted)}
+.nav{display:flex;gap:2px;margin-left:auto;flex-wrap:nowrap}
+.nav a{text-decoration:none;color:var(--muted);padding:6px 10px;border-radius:8px;font-size:14px}
+.nav a:hover{color:var(--ink);background:var(--surface)}
+.theme{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;width:36px;height:34px;cursor:pointer;display:grid;place-items:center;flex:0 0 auto}
+
+/* hero */
+.hero{padding-block:64px 40px}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:48px;align-items:center}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--accent);margin:0 0 14px}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(28px,4vw,46px);line-height:1.18;margin:0 0 16px;text-wrap:balance}
+.lede{color:var(--muted);margin:0 0 6px;max-width:52ch}
+.lede.en{font-size:14px;margin-bottom:26px}
+.cta{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:9px;border:1px solid var(--line);background:var(--surface);text-decoration:none;font-size:14px;font-weight:500;color:var(--ink);white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.primary:hover{opacity:.88}
+.btn.demo{border-color:var(--warm);color:var(--warm)}
+.btn.off{color:var(--muted);border-style:dashed;cursor:default}
+.matrix{width:100%;aspect-ratio:4/3;max-width:100%;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:48px}
+.facts div{background:var(--surface);padding:14px 18px}
+.facts b{display:block;font-family:var(--mono);font-size:24px;font-weight:500;font-variant-numeric:tabular-nums}
+.facts span{color:var(--muted);font-size:13px}
+
+/* sections */
+section{padding-block:44px}
+.head{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+h2{font-size:26px;margin:0;line-height:1.3}
+h2 small{display:block;font-family:var(--mono);font-size:12px;font-weight:400;color:var(--muted);letter-spacing:.06em;margin-bottom:4px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--muted);padding:5px 12px;border-radius:999px;cursor:pointer;font:inherit;font-size:13px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip em{font-style:normal;font-family:var(--mono);font-size:11px;opacity:.7;margin-left:4px}
+
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;min-width:0;transition:border-color .2s,transform .2s}
+.card:hover{border-color:var(--muted);transform:translateY(-2px)}
+.media{display:block;aspect-ratio:16/9;max-width:100%;background:#0E131B;overflow:hidden;position:relative;border-bottom:1px solid var(--line)}
+.media img{width:100%;height:100%;object-fit:cover;object-position:top left}
+.media canvas{width:100%;height:100%;display:block}
+.term{height:100%;padding:22px 24px;font-family:var(--mono);font-size:14px;color:#C9D4E2;line-height:1.9;background:#0E131B}
+.term .p{color:#3BCBB1}
+.term .c{display:inline-block;width:8px;height:15px;background:#C9D4E2;vertical-align:-2px;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.play{position:absolute;right:14px;bottom:14px;background:var(--warm);color:#fff;font-size:13px;font-weight:500;padding:6px 12px;border-radius:999px}
+.body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:10px;flex:1;min-width:0}
+.meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px}
+.cat{color:var(--muted);font-family:var(--mono);letter-spacing:.04em}
+.status{padding:2px 9px;border-radius:999px;font-weight:500}
+.tone-research{color:var(--t-research);background:var(--t-research-bg)}
+.tone-alpha{color:var(--t-alpha);background:var(--t-alpha-bg)}
+.tone-rc{color:var(--t-rc);background:var(--t-rc-bg)}
+.tone-stable{color:var(--t-stable);background:var(--t-stable-bg)}
+.tone-exp{color:var(--t-exp);background:var(--t-exp-bg)}
+.lic{margin-left:auto;font-family:var(--mono);color:var(--muted)}
+.card h3{margin:0;font-size:20px}
+.card .zh{margin:0}
+.card .en{margin:0;color:var(--muted);font-size:13px}
+.tags{list-style:none;display:flex;gap:6px;flex-wrap:wrap;margin:0;padding:0}
+.tags li{font-family:var(--mono);font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 7px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+.note{margin:0;font-size:12px;color:var(--muted)}
+
+/* demo */
+.feature{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:28px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.feature .media{border-radius:8px;border:0}
+.feature h3{font-size:22px;margin:0 0 8px}
+.feature p{margin:0 0 10px;color:var(--muted)}
+.steps{margin:0 0 16px;padding-left:20px;color:var(--muted)}
+.demos{margin-top:18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.demo{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;min-width:0}
+.demo .body{gap:8px}
+.demo h3{margin:0;font-size:17px}
+.demo p{margin:0;color:var(--muted);font-size:14px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;min-width:0}
+.box h3{margin:0 0 6px;font-size:17px}
+.box p{margin:0 0 10px;color:var(--muted);font-size:14px}
+pre{margin:0;overflow-x:auto;background:#0E131B;color:#C9D4E2;border-radius:8px;padding:12px 14px;font-family:var(--mono);font-size:13px;line-height:1.7}
+
+/* about */
+.about{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}
+.dirs{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.dirs li{border-left:3px solid var(--accent);padding:2px 0 2px 12px}
+.dirs b{display:block}
+.dirs span{color:var(--muted);font-size:14px}
+.contact p{margin:0 0 10px}
+.contact .k{font-family:var(--mono);font-size:12px;color:var(--muted);display:block}
+.copy{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:6px;font-size:12px;padding:2px 8px;cursor:pointer;margin-left:6px}
+footer{border-top:1px solid var(--line);padding-block:24px 40px;color:var(--muted);font-size:13px}
+footer p{margin:0 0 8px;max-width:90ch}
+
+@media (max-width:860px){
+  .hero .wrap,.feature,.about,.demos{grid-template-columns:minmax(0,1fr)}
+  .grid{grid-template-columns:minmax(0,1fr)}
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero{padding-block:36px 24px}
+  .nav a.hide-sm{display:none}
+}
+@media (prefers-reduced-motion: reduce){.card,.card:hover{transition:none;transform:none}.term .c{animation:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="ZeroMatrixTech 首页"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>ZeroMatrixTech</a>
+    <nav class="nav" aria-label="页面导航">
+      <a href="#projects">项目</a>
+      <a href="#demos">演示</a>
+      <a href="#about" class="hide-sm">关于</a>
+      <a href="https://github.com/ZeroMatrixTech" target="_blank" rel="noopener" class="hide-sm">GitHub ↗</a>
+    </nav>
+    <button class="theme" id="theme" type="button" aria-label="切换深色/浅色"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">北京凌矩阵科技有限责任公司 · 技术品牌</p>
+        <h1>从设备到系统，<br>让技术服务于实际需求。</h1>
+        <p class="lede">这里汇总 ZeroMatrixTech 的公开项目、在线演示与文档入口。每个项目的成熟度、许可证和使用边界以各自仓库为准。</p>
+        <p class="lede en">Projects, demos and docs from ZeroMatrixTech, in one place. Each repository is the source of truth for its maturity and license.</p>
+        <div class="cta">
+          <a class="btn primary" href="#projects">浏览项目</a>
+          <a class="btn demo" href="demos/aclt-theater.html">▶ 看 ACLt 动画</a>
+          <a class="btn" href="https://github.com/orgs/ZeroMatrixTech/repositories" target="_blank" rel="noopener">全部仓库 ↗</a>
+        </div>
+      </div>
+      <canvas class="matrix" id="matrix" aria-label="点阵动画装饰" role="img"></canvas>
+    </div>
+    <div class="wrap"><div class="facts" id="facts"></div></div>
+  </div>
+
+  <section id="projects">
+    <div class="wrap">
+      <div class="head">
+        <h2><small>PROJECTS</small>项目导航</h2>
+        <div class="chips" id="chips" role="group" aria-label="按方向筛选"></div>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <section id="demos">
+    <div class="wrap">
+      <div class="head"><h2><small>DEMOS</small>在线演示</h2><p class="lede" style="margin:0">全部在浏览器里运行，不需要安装。</p></div>
+      <div class="feature">
+        <a class="media" href="demos/aclt-theater.html" aria-label="打开 ACLt 像素动画"><img src="assets/aclt-theater.png" alt="ACLt 像素动画开场：方块拼出 ACLt，Claude 在右下角说“出发吧”"><span class="play">▶ 开始</span></a>
+        <div>
+          <h3>ACLt 像素冒险</h3>
+          <p>跟着 Claude 跑一圈像素世界，看一个计算任务怎样从约定走到结算：剃刀与桥、冰封的约定、抽签验证、看不见的线。</p>
+          <ol class="steps">
+            <li>约 2 分 30 秒，有芯片配乐和音效</li>
+            <li>点“开始冒险”后才会出声</li>
+            <li>空格暂停，← → 切换关卡</li>
+          </ol>
+          <a class="btn demo" href="demos/aclt-theater.html">▶ 打开动画</a>
+        </div>
+      </div>
+      <div class="demos" id="demos-grid"></div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap about">
+      <div>
+        <div class="head"><h2><small>ABOUT</small>我们在做什么</h2></div>
+        <ul class="dirs">
+          <li><b>电脑销售与售后</b><span>设备选型、配置建议与售后支持。</span></li>
+          <li><b>企业 IT 服务</b><span>办公设备、系统环境与日常维护的技术支持。</span></li>
+          <li><b>软件开发与工程实现</b><span>业务流程、工具开发、系统集成与自动化。</span></li>
+          <li><b>技术研发与协作</b><span>软件、算法与计算基础设施研究，以及开源协作。</span></li>
+        </ul>
+      </div>
+      <div class="contact">
+        <div class="head"><h2><small>CONTACT</small>交流与合作</h2></div>
+        <p><span class="k">EMAIL</span><span id="mail">inpax@tenneidp.com</span><button class="copy" id="copy" type="button">复制</button></p>
+        <p><span class="k">ADDRESS</span>北京市朝阳区北京像素南区 7 号楼 0215</p>
+        <p><span class="k">ISSUES</span>开源项目的问题反馈与技术讨论，请到对应仓库的 Issues；参与开发前请先阅读各项目的贡献指南。</p>
+        <p><a class="btn" href="https://github.com/ZeroMatrixTech" target="_blank" rel="noopener">组织主页与团队介绍 ↗</a></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>本公司在文档编辑、项目管理、漏洞修复、对抗测试和项目优化等环节大量使用生成式人工智能，并在验收阶段进行人工核查。请谨慎审阅我们的开源项目，发现疏漏欢迎指正。</p>
+    <p>© ZeroMatrixTech · 北京凌矩阵科技有限责任公司</p>
+  </div>
+</footer>
+
+<script src="projects.js"></script>
+<script>
+(() => {
+"use strict";
+const P = window.ZMT_PROJECTS || [], CATS = window.ZMT_CATEGORIES || {};
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const el = (tag, attrs = {}, ...kids) => { const n = document.createElement(tag); for (const [k, v] of Object.entries(attrs)) { if (v == null) continue; if (k === "class") n.className = v; else if (k === "text") n.textContent = v; else n.setAttribute(k, v); } kids.flat().forEach(c => c && n.append(c)); return n; };
+const ext = href => /^https?:/.test(href) ? { target: "_blank", rel: "noopener" } : {};
+const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+/* theme */
+const root = document.documentElement;
+try { const s = localStorage.getItem("zmt-theme"); if (s) root.dataset.theme = s; } catch (e) {}
+document.getElementById("theme").addEventListener("click", () => {
+  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark";
+  try { localStorage.setItem("zmt-theme", root.dataset.theme); } catch (e) {}
+});
+
+/* facts */
+const facts = [
+  [P.length, "个项目"],
+  [P.filter(p => p.repo).length, "个公开仓库"],
+  [P.reduce((n, p) => n + (p.links || []).filter(l => l.kind === "demo").length, 0), "个在线演示"],
+  [new Set(P.map(p => p.category)).size, "个方向"],
+];
+document.getElementById("facts").append(...facts.map(([n, s]) => el("div", {}, el("b", { text: String(n) }), el("span", { text: s }))));
+
+/* project art */
+function curves(cv) {
+  const g = cv.getContext("2d"); let t0 = null;
+  const draw = now => {
+    const w = cv.clientWidth, h = cv.clientHeight, d = Math.min(devicePixelRatio || 1, 2);
+    if (cv.width !== Math.round(w * d)) { cv.width = Math.round(w * d); cv.height = Math.round(h * d); }
+    g.setTransform(d, 0, 0, d, 0, 0); g.fillStyle = "#0E131B"; g.fillRect(0, 0, w, h);
+    g.strokeStyle = "rgba(255,255,255,.05)"; g.lineWidth = 1; g.beginPath();
+    for (let x = 0; x < w; x += 20) { g.moveTo(x + .5, 0); g.lineTo(x + .5, h); } for (let y = 0; y < h; y += 20) { g.moveTo(0, y + .5); g.lineTo(w, y + .5); } g.stroke();
+    if (t0 === null) t0 = now; const p = reduce ? 1 : Math.min(1, (now - t0) / 4000);
+    const cx = w / 2, cy = h / 2, R = Math.min(w, h) * .38;
+    const fam = [[t => Math.cos(5 * t) * Math.cos(t), t => Math.cos(5 * t) * Math.sin(t), "#3BCBB1", Math.PI], [t => Math.sin(3 * t + .5), t => Math.sin(4 * t), "#F0895B", Math.PI * 2], [t => .55 * Math.cos(t) + .25 * Math.cos(7 * t), t => .55 * Math.sin(t) - .25 * Math.sin(7 * t), "#B9A6FF", Math.PI * 2]];
+    fam.forEach(([fx, fy, c, T]) => { g.strokeStyle = c; g.lineWidth = 1.6; g.beginPath(); const N = 600; for (let i = 0; i <= N * p; i++) { const t = i / N * T; const x = cx + fx(t) * R, y = cy - fy(t) * R; i ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke(); });
+    if (p < 1) requestAnimationFrame(draw);
+  };
+  new IntersectionObserver((es, ob) => { if (es.some(e => e.isIntersecting)) { ob.disconnect(); requestAnimationFrame(draw); } }).observe(cv);
+}
+function media(p) {
+  const demo = (p.links || []).find(l => l.kind === "demo");
+  const href = demo ? demo.href : p.repo;
+  const box = el(href ? "a" : "div", { class: "media", href, ...(href ? ext(href) : {}), "aria-label": href ? `打开 ${p.name}` : null });
+  if (p.image) box.append(el("img", { src: p.image, alt: p.imageAlt || p.name, loading: "lazy" }));
+  else if (p.art === "terminal") box.append(el("div", { class: "term", "aria-hidden": "true" }, (p.terminal || []).map(c => el("div", {}, el("span", { class: "p", text: "$ " }), c)), el("div", {}, el("span", { class: "p", text: "$ " }), el("span", { class: "c" }))));
+  else if (p.art === "curves") { const c = el("canvas", { "aria-hidden": "true" }); box.append(c); curves(c); }
+  if (demo) box.append(el("span", { class: "play", text: "▶ 演示" }));
+  return box;
+}
+function card(p) {
+  const actions = [];
+  if (p.repo) actions.push(el("a", { class: "btn primary", href: p.repo, ...ext(p.repo), text: "仓库 ↗" }));
+  else actions.push(el("span", { class: "btn off", text: p.repoNote || "仓库未公开" }));
+  (p.links || []).forEach(l => actions.push(el("a", { class: "btn" + (l.kind === "demo" ? " demo" : ""), href: l.href, ...ext(l.href), text: (l.kind === "demo" ? "▶ " : "") + l.label + (/^https?:/.test(l.href) ? " ↗" : "") })));
+  return el("article", { class: "card", "data-cat": p.category, id: p.id },
+    media(p),
+    el("div", { class: "body" },
+      el("div", { class: "meta" }, el("span", { class: "cat", text: CATS[p.category] || p.category }), el("span", { class: "status tone-" + (p.status?.tone || "exp"), text: p.status?.label || "" }), el("span", { class: "lic", text: p.license || "" })),
+      el("h3", { text: p.name }),
+      el("p", { class: "zh", text: p.zh }),
+      p.en ? el("p", { class: "en", text: p.en }) : null,
+      el("ul", { class: "tags" }, (p.tags || []).map(t => el("li", { text: t }))),
+      p.note ? el("p", { class: "note", text: p.note }) : null,
+      el("div", { class: "actions" }, actions)));
+}
+const grid = document.getElementById("grid"), cards = P.map(card); grid.append(...cards);
+
+/* demo grid: every project demo except the featured ACLt one */
+const dg = document.getElementById("demos-grid");
+P.filter(p => p.id !== "aclt").forEach(p => (p.links || []).filter(l => l.kind === "demo").forEach(l => {
+  dg.append(el("article", { class: "demo" }, media(p),
+    el("div", { class: "body" },
+      el("div", { class: "meta" }, el("span", { class: "cat", text: p.name })),
+      el("h3", { text: l.label }),
+      l.desc ? el("p", { text: l.desc }) : null,
+      el("div", { class: "actions" }, el("a", { class: "btn demo", href: l.href, text: "▶ 打开演示" })))));
+}));
+
+/* filter */
+const chips = document.getElementById("chips"); let current = "all";
+const counts = P.reduce((m, p) => (m[p.category] = (m[p.category] || 0) + 1, m), {});
+[["all", "全部", P.length], ...Object.keys(CATS).filter(k => counts[k]).map(k => [k, CATS[k], counts[k]])].forEach(([k, label, n]) => {
+  const b = el("button", { class: "chip", type: "button", "aria-pressed": String(k === current) }, label, el("em", { text: String(n) }));
+  b.addEventListener("click", () => { current = k; chips.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c === b))); cards.forEach(c => c.hidden = k !== "all" && c.dataset.cat !== k); });
+  chips.append(b);
+});
+
+/* copy email */
+document.getElementById("copy").addEventListener("click", e => {
+  const t = document.getElementById("mail").textContent, b = e.currentTarget;
+  const done = ok => { b.textContent = ok ? "已复制" : "请手动复制"; setTimeout(() => b.textContent = "复制", 1600); };
+  if (navigator.clipboard) navigator.clipboard.writeText(t).then(() => done(true), () => { getSelection().selectAllChildren(document.getElementById("mail")); done(false); });
+  else { getSelection().selectAllChildren(document.getElementById("mail")); done(false); }
+});
+
+/* hero dot-matrix */
+const mc = document.getElementById("matrix"), mg = mc.getContext("2d");
+const COLS = 16, ROWS = 12;
+const LOGO = ["0000000000000000", "0000000000000000", "0000000000000000", "0011111001100110", "0000010001111110", "0000100001011010", "0001000001000010", "0011111001000010", "0000000000000000", "0000000000000000", "0000000000000000", "0000000000000000", "0000000000000000"];
+let start = performance.now(), visible = true;
+new IntersectionObserver(es => { visible = es.some(e => e.isIntersecting); if (visible) requestAnimationFrame(tick); }).observe(mc);
+function tick(now) {
+  const w = mc.clientWidth, h = mc.clientHeight, d = Math.min(devicePixelRatio || 1, 2);
+  if (mc.width !== Math.round(w * d)) { mc.width = Math.round(w * d); mc.height = Math.round(h * d); }
+  mg.setTransform(d, 0, 0, d, 0, 0); mg.clearRect(0, 0, w, h);
+  const t = reduce ? 6 : (now - start) / 1000, cw = w / (COLS + 1), ch = h / (ROWS + 1), r = Math.min(cw, ch) * .32;
+  const acc = css("--accent"), line = css("--line"), warm = css("--warm");
+  for (let j = 0; j < ROWS; j++) for (let i = 0; i < COLS; i++) {
+    const x = (i + 1) * cw, y = (j + 1) * ch;
+    const wave = .5 + .5 * Math.sin(i * .55 - t * 1.6 + Math.sin(j * .4 + t * .5) * 1.4);
+    const logo = LOGO[j] && LOGO[j][i] === "1" ? (reduce ? 1 : Math.min(1, Math.max(0, (t - .2 - (i + j) * .04) / .5))) : 0;
+    const glint = wave > .9 ? (wave - .9) / .1 : 0, lit = logo > 0 ? Math.min(1, .55 + .45 * glint) * logo : glint * .35;
+    mg.globalAlpha = 1; mg.fillStyle = line; mg.beginPath(); mg.arc(x, y, r, 0, Math.PI * 2); mg.fill();
+    if (lit > 0) { mg.globalAlpha = lit; mg.fillStyle = logo > 0 && i >= 9 ? acc : logo > 0 ? warm : acc; mg.beginPath(); mg.arc(x, y, r * (1 + .15 * lit), 0, Math.PI * 2); mg.fill(); }
+  }
+  mg.globalAlpha = 1;
+  if (visible && !reduce) requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
