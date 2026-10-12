@@ -1,0 +1,1051 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ACLt 协议剧场</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+/* Layout: one pixel-art side-scrolling stage (320x180 world, upscaled 4x), a caption rail with the host, then the stage list. Single committed night-sky look. */
+:root{
+  --night:#0d1324; --night-2:#161e36; --line:#2a3656; --paper:#F2EDE4; --mute:#8D97AB;
+  --frost:#9FD0EE; --amber:#F2A65A; --clawd:#E8774A; --sage:#74C7A5; --coral:#EC6F5F; --ink:#0B0F1A;
+  --fun:"ZCOOL KuaiLe","Noto Sans SC","PingFang SC",sans-serif;
+  --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --px:"Press Start 2P",ui-monospace,monospace;
+  color-scheme:dark;
+}
+html{background:var(--night)}
+[hidden]{display:none!important}
+body{margin:0;background:var(--night);color:var(--paper);font-family:var(--body);font-size:15px;line-height:1.6}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:28px 56px;display:grid;gap:18px}
+.top{display:grid;gap:8px}
+.eyebrow{font-family:var(--px);font-size:10px;letter-spacing:.1em;color:var(--amber);line-height:1.8}
+h1{font-family:var(--fun);font-weight:400;font-size:clamp(30px,5vw,50px);line-height:1.1;margin:0;text-wrap:balance}
+.lede{margin:0;color:var(--mute);max-width:68ch}
+.stage{position:relative;width:100%;aspect-ratio:16/9;max-width:100%;border:4px solid var(--line);border-radius:6px;overflow:hidden;background:var(--night);image-rendering:pixelated}
+.stage canvas{display:block;width:100%;height:100%}
+.start{position:absolute;inset:0;width:100%;height:100%;border:0;margin:0;padding:0 0 6%;background:linear-gradient(to top,rgba(8,11,24,.82),rgba(8,11,24,0) 55%);cursor:pointer;display:flex;align-items:flex-end;justify-content:center;font:inherit;color:var(--paper)}
+.start span{display:grid;justify-items:center;gap:6px;padding:14px 26px;background:var(--clawd);color:var(--ink);box-shadow:0 0 0 4px var(--ink),0 0 0 8px var(--paper),0 8px 0 8px rgba(0,0,0,.35)}
+.start b{font-family:var(--fun);font-weight:400;font-size:clamp(18px,2.6vw,26px)}
+.start small{font-family:var(--px);font-size:9px;letter-spacing:.06em}
+.start:hover span{background:#F59B6E}
+.start:focus-visible span,.ctl button:focus-visible,.acts button:focus-visible,#scrub:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+.ctl{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.ctl button{font-family:var(--fun);font-size:15px;background:var(--night-2);color:var(--paper);border:2px solid var(--line);border-radius:4px;padding:6px 12px;cursor:pointer;min-width:44px}
+.ctl button:hover{border-color:var(--amber)}
+.ctl button[aria-pressed="false"]{color:var(--mute);text-decoration:line-through}
+#scrub{flex:1 1 220px;min-width:0;accent-color:var(--clawd)}
+.time{font-family:var(--px);font-size:10px;color:var(--mute);font-variant-numeric:tabular-nums}
+.caption{display:flex;gap:14px;align-items:flex-start;background:var(--night-2);border:2px solid var(--line);border-radius:6px;padding:14px 16px;min-height:96px}
+.caption canvas{flex:0 0 auto;width:64px;height:64px;image-rendering:pixelated}
+.caption .say{min-width:0;display:grid;gap:4px}
+.who{font-family:var(--px);font-size:10px;color:var(--clawd);letter-spacing:.06em}
+#line{font-family:var(--fun);font-size:19px;line-height:1.6;margin:0}
+#ref{font-size:12px;color:var(--mute);margin:0}
+.acts{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.acts button{width:100%;text-align:left;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;background:transparent;color:var(--paper);border:2px solid var(--line);border-radius:4px;padding:10px 12px;cursor:pointer;font:inherit}
+.acts button:hover{border-color:var(--mute)}
+.acts button[aria-current="true"]{border-color:var(--clawd);background:var(--night-2)}
+.acts .n{font-family:var(--px);font-size:9px;color:var(--amber);grid-row:span 2;padding-top:5px}
+.acts .t{font-family:var(--fun);font-size:17px}
+.acts .r{font-size:12px;color:var(--mute);min-width:0}
+.note{font-size:13px;color:var(--mute);max-width:80ch;margin:0}
+.note code{font-size:12px;color:var(--frost)}
+@media (max-width:560px){#line{font-size:16px}.caption canvas{width:48px;height:48px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">ACLT PROTOCOL · PIXEL TOUR</div>
+    <h1>ACLt 协议剧场</h1>
+    <p class="lede">跟着 Claude 在像素世界里跑一圈：算力集市、剃刀与桥、冰封的约定、抽签验证、看不见的线……一个计算任务从约定到结算的冒险，大约两分半钟。</p>
+  </header>
+
+  <div class="stage">
+    <canvas id="stage" role="img" aria-label="ACLt 像素动画，Claude 在画面中当导游"></canvas>
+    <button class="start" id="start" type="button"><span><b>▶ 开始冒险</b><small>MUSIC + SFX · 2:30</small></span></button>
+  </div>
+
+  <div class="ctl" role="group" aria-label="播放控制">
+    <button id="prev" type="button" aria-label="上一关">⏮</button>
+    <button id="play" type="button" aria-label="播放">▶</button>
+    <button id="next" type="button" aria-label="下一关">⏭</button>
+    <input id="scrub" type="range" min="0" max="100" step="0.05" value="0" aria-label="播放进度">
+    <span class="time" id="time">0:00 / 0:00</span>
+    <button id="music" type="button" aria-pressed="true">♪ 配乐</button>
+    <button id="sfx" type="button" aria-pressed="true">✦ 音效</button>
+    <button id="speed" type="button" aria-label="播放速度">1×</button>
+  </div>
+
+  <div class="caption">
+    <canvas id="avatar" width="64" height="64" aria-hidden="true"></canvas>
+    <div class="say">
+      <div class="who">CLAUDE · 导游</div>
+      <p id="line"></p>
+      <p id="ref"></p>
+    </div>
+  </div>
+
+  <ol class="acts" id="acts"></ol>
+
+  <p class="note">配乐和音效由浏览器 Web Audio 实时合成，点击开始后才会出声。画面里的约定内容、抽签人数和证据刻度都是示意，用来讲清思路；完整定义见仓库 <code>docs/</code> 下的规范文档。快捷键：空格 播放/暂停，← → 切换关卡。</p>
+</div>
+<script>
+(() => {
+"use strict";
+/* ================= world & canvases ================= */
+const W = 1280, H = 720, LW = 320, LH = 180, K = 4, GY = 148, ZW = 420, A = 1.6, TR = 1.6;
+const Z = i => i * ZW;
+const cv = document.getElementById("stage"), ctx = cv.getContext("2d");
+const av = document.getElementById("avatar"), actx = av.getContext("2d");
+const lo = document.createElement("canvas"); lo.width = LW; lo.height = LH;
+const L = lo.getContext("2d");
+const C = {
+  ink: "#0B0F1A", paper: "#F2EDE4", mute: "#8D97AB", frost: "#9FD0EE", ice: "#BFE6FF", amber: "#F2A65A",
+  gold: "#FFD166", sage: "#74C7A5", coral: "#EC6F5F", violet: "#B3A8E6", wood: "#8A5A3C", wood2: "#5E3C28",
+  stone: "#5B6478", blue: "#6FA8DC",
+};
+const FONTS = { fun: '"ZCOOL KuaiLe","Noto Sans SC","PingFang SC",sans-serif', px: '"Press Start 2P",ui-monospace,monospace', sans: '"Noto Sans SC","PingFang SC",sans-serif' };
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let WT = 0;
+
+/* ================= math ================= */
+const clamp = (v, a = 0, b = 1) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+const P = (t, a, b) => clamp((t - a) / (b - a));
+const E = {
+  out: t => 1 - Math.pow(1 - t, 3), in: t => t * t * t,
+  inOut: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+  back: t => { const c = 1.70158, d = c + 1; return 1 + d * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); },
+};
+const win = (t, a, b, f = .3) => E.out(P(t, a, a + f)) * (1 - E.in(P(t, b - f, b)));
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const hash = n => (Math.imul(n | 0, 2654435761) >>> 0) % 997;
+const qpt = (a, c, b, t) => { const u = 1 - t; return { x: u * u * a.x + 2 * u * t * c.x + t * t * b.x, y: u * u * a.y + 2 * u * t * c.y + t * t * b.y }; };
+const arc = (a, b, h, t) => qpt(a, { x: (a.x + b.x) / 2, y: Math.min(a.y, b.y) - h }, b, t);
+const SHADE = new Map();
+function shade(hex, f) {
+  const key = hex + f; if (SHADE.has(key)) return SHADE.get(key);
+  const n = parseInt(hex.slice(1), 16), tgt = f > 0 ? 255 : 0, a = Math.abs(f);
+  const ch = v => Math.round(v + (tgt - v) * a);
+  const out = `rgb(${ch(n >> 16)},${ch(n >> 8 & 255)},${ch(n & 255)})`; SHADE.set(key, out); return out;
+}
+
+/* ================= pixel primitives (on L, world coords) ================= */
+function R(x, y, w, h, c) { if (w <= 0 || h <= 0) return; L.fillStyle = c; L.fillRect(Math.round(x), Math.round(y), Math.max(1, Math.round(w)), Math.max(1, Math.round(h))); }
+function bevel(x, y, w, h, c, hi, lo2) { R(x, y, w, h, c); R(x, y, w, 1, hi || shade(c, .3)); R(x, y, 1, h, hi || shade(c, .3)); R(x, y + h - 1, w, 1, lo2 || shade(c, -.35)); R(x + w - 1, y, 1, h, lo2 || shade(c, -.35)); }
+function disc(cx, cy, r, c) { cx = Math.round(cx); cy = Math.round(cy); r = Math.round(r); L.fillStyle = c; for (let dy = -r; dy <= r; dy++) { const w = Math.round(Math.sqrt(r * r - dy * dy)); L.fillRect(cx - w, cy + dy, 2 * w + 1, 1); } }
+function ring(cx, cy, r, c) { cx = Math.round(cx); cy = Math.round(cy); r = Math.round(r); L.fillStyle = c; let x = r, y = 0, e = 1 - r; while (x >= y) { for (const [a, b] of [[x, y], [y, x], [-y, x], [-x, y], [-x, -y], [-y, -x], [y, -x], [x, -y]]) L.fillRect(cx + a, cy + b, 1, 1); y++; if (e < 0) e += 2 * y + 1; else { x--; e += 2 * (y - x) + 1; } } }
+function oval(cx, cy, rx, ry, c) { L.fillStyle = c; for (let k = 0; k < 96; k++) { const a = k / 96 * Math.PI * 2; L.fillRect(Math.round(cx + Math.cos(a) * rx), Math.round(cy + Math.sin(a) * ry), 1, 1); } }
+function ln(x0, y0, x1, y1, c) { x0 = Math.round(x0); y0 = Math.round(y0); x1 = Math.round(x1); y1 = Math.round(y1); L.fillStyle = c; const dx = Math.abs(x1 - x0), dy = -Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1; let e = dx + dy, n = 0; while (n++ < 900) { L.fillRect(x0, y0, 1, 1); if (x0 === x1 && y0 === y1) break; const e2 = 2 * e; if (e2 >= dy) { e += dy; x0 += sx; } if (e2 <= dx) { e += dx; y0 += sy; } } }
+function alpha(a, fn) { if (a <= 0) return; const o = L.globalAlpha; L.globalAlpha = o * Math.min(1, a); fn(); L.globalAlpha = o; }
+function pop(cx, cy, s, fn) { if (s <= .02) return; L.save(); L.translate(cx, cy); L.scale(s, s); L.translate(-cx, -cy); fn(); L.restore(); }
+const GL = {
+  "?": ["111", "001", "011", "000", "010"], "!": ["1", "1", "1", "0", "1"], v: ["00001", "00010", "10100", "01000"],
+  x: ["101", "010", "101"], heart: ["01010", "11111", "01110", "00100"], dots: ["10101"],
+};
+function glyph(g, x, y, c, s = 1) { GL[g].forEach((row, j) => [...row].forEach((ch, i) => { if (ch === "1") R(x + i * s, y + j * s, s, s, c); })); }
+function sparkle(x, y, c = C.paper, big = false) { const k = big ? 2 : 1; R(x - k, y, 2 * k + 1, 1, c); R(x, y - k, 1, 2 * k + 1, c); }
+function pbub(x, y, g, a = 1, col = C.ink) { alpha(a, () => { x = Math.round(x); y = Math.round(y); R(x - 4, y - 5, 9, 8, C.paper); R(x - 5, y - 4, 11, 6, C.paper); R(x - 1, y + 3, 2, 1, C.paper); R(x - 1, y + 4, 1, 1, C.paper); const w = GL[g][0].length, h = GL[g].length; glyph(g, x - Math.floor(w / 2), y - 1 - Math.floor(h / 2), col); }); }
+
+/* ================= hi-res queues ================= */
+const TQ = [], GQ = [], used = new Set();
+function TX(s, x, y, o = {}) { s = String(s); for (const ch of s) used.add(ch); TQ.push({ s, x, y, o }); }
+function GLOW(x, y, r, rgb, a) { GQ.push({ x, y, r, rgb, a }); }
+
+/* ================= sprites ================= */
+const blink = seed => ((WT + seed * .37) % 3.9) < .12;
+function crit(x, y, o = {}) {
+  x = Math.round(x); y = Math.round(y - (o.hop || 0));
+  const c = o.c || C.sage, d = shade(c, -.4), hi = shade(c, .35);
+  const st = o.walk ? Math.sin(WT * 14 + x) > 0 : null;
+  alpha(o.a ?? 1, () => {
+    R(x - 3, y - 3, 1, st === true ? 2 : 3, d); R(x + 2, y - 3, 1, st === false ? 2 : 3, d);
+    R(x - 3, y - 5, 6, 2, shade(c, -.18));
+    const top = y - 12;
+    R(x - 5, top + 1, 10, 6, c); R(x - 4, top, 8, 1, hi); R(x - 4, top + 7, 8, 1, d);
+    R(x - 4, top + 1, 8, 5, "#16243a");
+    const ex = o.look ? Math.sign(o.look) : 0, e = o.eyes || "n", ec = o.ec || C.ice;
+    if (e === "sleep") { R(x - 3, top + 4, 2, 1, ec); R(x + 1, top + 4, 2, 1, ec); }
+    else if (e === "happy") { for (const b of [x - 3, x + 1]) { R(b, top + 3, 1, 1, ec); R(b + 1, top + 2, 1, 1, ec); R(b + 2, top + 3, 1, 1, ec); } }
+    else if (e === "wow") { R(x - 3 + ex, top + 2, 2, 3, ec); R(x + 1 + ex, top + 2, 2, 3, ec); }
+    else if (e === "x") { glyph("x", x - 4, top + 2, C.coral); glyph("x", x + 1, top + 2, C.coral); }
+    else { const b = blink(x); R(x - 2 + ex, top + 2 + (b ? 2 : 0), 1, b ? 1 : 2, ec); R(x + 1 + ex, top + 2 + (b ? 2 : 0), 1, b ? 1 : 2, ec); }
+    if (o.shades) R(x - 4, top + 2, 8, 2, "#05070d");
+    if (o.mask) R(x - 4, top + 4, 8, 2, "#d8d2e8");
+    if (o.ant) { R(x, top - 3, 1, 3, d); R(x - 1, top - 4, 3, 1, C.amber); }
+  });
+}
+function reqr(x, y, o = {}) {
+  x = Math.round(x); y = Math.round(y - (o.hop || 0));
+  const c = C.blue, d = "#41709e", hi = "#a8cdf0", st = o.walk ? Math.sin(WT * 14) > 0 : null;
+  R(x - 4, y - 2, 2, st === true ? 1 : 2, d); R(x + 2, y - 2, 2, st === false ? 1 : 2, d);
+  const top = y - 15;
+  R(x - 5, top, 10, 13, c); R(x - 6, top + 1, 12, 11, c); R(x - 5, top, 10, 1, hi); R(x - 6, top + 1, 1, 4, hi); R(x - 5, top + 12, 10, 1, d);
+  const b = blink(3), lk = o.look ? Math.sign(o.look) : 0;
+  R(x - 3 + lk, top + 4 + (b ? 2 : 0), 2, b ? 1 : 3, C.ink); R(x + 1 + lk, top + 4 + (b ? 2 : 0), 2, b ? 1 : 3, C.ink);
+  R(x - 5, top + 8, 2, 1, "#e98a9a"); R(x + 3, top + 8, 2, 1, "#e98a9a");
+  R(x - 3, top - 5, 6, 5, "#2b3550"); R(x - 5, top - 1, 10, 1, "#2b3550"); R(x - 3, top - 2, 6, 1, C.amber);
+}
+function orb(x, y, c = C.amber) { const b = Math.sin(WT * 3) * 1.2; disc(x, y + b, 3, c); R(x - 1, y - 2 + b, 1, 1, "#fff6d8"); GLOW(x, y + b, 14, "255,190,110", .5); }
+function lockSpr(cx, cy, c = C.gold) { cx = Math.round(cx); cy = Math.round(cy); R(cx - 3, cy - 9, 1, 4, "#c9c9d6"); R(cx + 3, cy - 9, 1, 4, "#c9c9d6"); R(cx - 2, cy - 10, 5, 1, "#c9c9d6"); bevel(cx - 4, cy - 5, 9, 7, c, "#ffeab0", "#b8862e"); R(cx, cy - 3, 1, 3, "#5a3e10"); }
+function iceBox(x, y, w, h, p, seed = 1) {
+  if (p <= 0) return; const fw = w * p;
+  alpha(.42, () => R(x, y, fw, h, C.ice));
+  const r = rng(seed); for (let k = 0; k < 9; k++) { const sx = x + r() * w, sy = y + r() * h, l = 3 + r() * 8; if (sx + l > x + fw) continue; alpha(.8, () => ln(sx, sy, sx + l, sy - l, "#ffffff")); }
+  if (p < 1) R(x + fw - 1, y, 1, h, "#ffffff");
+  else { R(x, y, w, 1, "#e6f6ff"); R(x, y, 1, h, "#e6f6ff"); R(x, y + h - 1, w, 1, "#6fa3c8"); R(x + w - 1, y, 1, h, "#6fa3c8"); }
+  GLOW(x + fw / 2, y + h / 2, Math.max(w, h) * .7, "160,215,250", .2 * p);
+}
+function hourglass(x, y, a, sand = "#f2d27a", frame = C.gold) {
+  x = Math.round(x); y = Math.round(y); const g = "#9fd0ee";
+  R(x, y, 5, 1, frame); R(x, y + 7, 5, 1, frame);
+  R(x, y + 1, 1, 2, g); R(x + 4, y + 1, 1, 2, g); R(x + 1, y + 3, 1, 2, g); R(x + 3, y + 3, 1, 2, g); R(x, y + 5, 1, 2, g); R(x + 4, y + 5, 1, 2, g);
+  const top = Math.round(clamp(a) * 2), bot = Math.round((1 - clamp(a)) * 2);
+  if (top > 0) R(x + 1, y + 3 - top, 3, top, sand); if (bot > 0) R(x + 1, y + 7 - bot, 3, bot, sand);
+  if (a > 0 && a < 1) R(x + 2, y + 4, 1, 1, sand);
+}
+function firework(cx, cy, t0, t, seed, cols) {
+  const u = t - t0; if (u < 0 || u > 2.1) return;
+  if (u < .4) { const y = lerp(GY, cy, E.out(u / .4)); R(cx, y, 1, 3, C.paper); R(cx, y + 3, 1, 2, C.amber); return; }
+  const v = u - .4, r = rng(seed);
+  for (let k = 0; k < 28; k++) { const ang = k / 28 * Math.PI * 2 + r() * .2, sp = 16 + r() * 18, al = 1 - v / 1.7; if (al <= 0) continue; const px = cx + Math.cos(ang) * sp * v, py = cy + Math.sin(ang) * sp * v + 14 * v * v; if (Math.sin(WT * 30 + k) > -.4) alpha(al, () => R(px, py, v < .3 ? 2 : 1, v < .3 ? 2 : 1, cols[k % cols.length])); }
+  if (v < .3) GLOW(cx, cy, 34, "255,220,150", .55 * (1 - v / .3));
+}
+function smoke(x, y, on, col = "#8a8fb0", seed = 0) { if (!on) return; for (let k = 0; k < 3; k++) { const u = (WT * .55 + k / 3 + seed * .13) % 1; alpha(1 - u, () => disc(x + Math.sin(u * 6 + k + seed) * 2, y - u * 16, 1 + u * 2.4, col)); } }
+function gearPx(x, y, rot, c) { const f = Math.floor(rot * 4) % 2; R(x - 1, y - 3, 3, 7, c); R(x - 3, y - 1, 7, 3, c); if (f) { R(x - 3, y - 3, 2, 2, c); R(x + 2, y - 3, 2, 2, c); R(x - 3, y + 2, 2, 2, c); R(x + 2, y + 2, 2, 2, c); } R(x, y, 1, 1, "#16243a"); }
+function coinPx(x, y, ph = 0) { const w = Math.max(1, Math.round(Math.abs(Math.cos(WT * 5 + ph)) * 3)); R(x - w, y - 3, 2 * w + 1, 7, C.gold); R(x - w, y - 3, 1, 7, "#fff1b8"); GLOW(x, y, 10, "255,210,100", .4); }
+
+/* ================= Clawd (the host) ================= */
+function clawd(o) {
+  const body = "#E8774A", hi = "#F59B6E", lo2 = "#C25B31", eye = "#2a140a";
+  const sq = o.squash || 0, bw = 24 + Math.round(sq * 4), bh = 16 - Math.round(sq * 3), legH = o.air ? 4 : 6;
+  const talkB = o.talk > .1 && Math.sin(WT * 20) > 0 ? 1 : 0;
+  const x = Math.round(o.x), bx = x - Math.round(bw / 2), by = Math.round(o.y) - legH - bh - talkB;
+  GLOW(x, by + bh / 2, 36, "255,130,72", .3);
+  if (o.jet) for (let k = 0; k < 10; k++) { const u = (WT * 2.6 + k / 10) % 1, dx = (o.dir < 0 ? 1 : -1); alpha(1 - u, () => R(x + dx * (8 + u * 30), by + bh + 2 + Math.sin(k * 7 + WT * 9) * 3, 2, 2, k % 2 ? C.gold : C.amber)); }
+  [2, 4, 7, 9].forEach((u, k) => { let h = legH; if (o.walk && ((k % 2 === 0) === (Math.sin(WT * 16) > 0))) h -= 2; if (o.air) h -= k % 2; R(bx + Math.round(u * bw / 12), by + bh, 2, h, body); });
+  R(bx, by, bw, bh, body); R(bx + 2, by, bw - 4, 1, hi); R(bx, by + bh - 1, bw, 1, lo2);
+  const put = (side, ux, uy, uw, uh) => R(side > 0 ? bx + bw + ux * 2 : bx - (ux + uw) * 2, by + uy * 2, uw * 2, uh * 2, body);
+  const ptSide = o.point && o.point.p > 0 ? (o.point.x >= x ? 1 : -1) : 0;
+  for (const side of [-1, 1]) {
+    let mode = "rest";
+    if (o.both) mode = "up"; else if (o.shrug) mode = "shrug";
+    else if (side === ptSide) mode = "point";
+    else if (o.out && side === (o.dir || 1)) mode = "out";
+    else if (o.wave && side === 1) mode = "wave";
+    else if (o.air) mode = "up";
+    const base = side > 0 ? 3 : 4, fl = o.talk > .1 && Math.sin(WT * 18 + side) > 0 ? 1 : 0;
+    if (mode === "up") { put(side, 0, 2, 1, 2); put(side, 1, 0, 1, 2); }
+    else if (mode === "wave") { if (Math.sin(WT * 12) > 0) { put(side, 0, 2, 1, 2); put(side, 1, 0, 1, 2); } else put(side, 0, 1, 2, 2); }
+    else if (mode === "shrug") { put(side, 0, 3, 1, 1); put(side, 1, 2, 1, 1); }
+    else if (mode === "point") { const len = Math.round(2 + 4 * o.point.p); if (o.point.y < by - 8) { put(side, 0, 2, 2, 2); put(side, 2, 0, Math.max(1, len - 2), 2); } else put(side, 0, base, len, 2); }
+    else if (mode === "out") { put(side, 0, base, 3, 2); R(side > 0 ? bx + bw + 6 : bx - 12, by + base * 2 - 1, 6, 5, "#9aa3b5"); R(side > 0 ? bx + bw + 11 : bx - 12, by + base * 2, 1, 3, C.gold); }
+    else put(side, 0, base - fl, 2, 2);
+  }
+  const lk = Math.max(-1, Math.min(1, Math.round(o.look ?? o.dir ?? 0)));
+  const ey = by + 4, b = blink(1.3);
+  for (const ex of [bx + 6 + lk, bx + bw - 8 + lk]) {
+    if (o.eyes === "happy") { R(ex - 1, ey + 3, 1, 1, eye); R(ex, ey + 2, 2, 1, eye); R(ex + 2, ey + 3, 1, 1, eye); }
+    else if (o.eyes === "wow") R(ex, ey - 1, 2, 6, eye);
+    else if (o.eyes === "shut") R(ex - 1, ey + 3, 4, 1, eye);
+    else if (b) R(ex, ey + 3, 2, 1, eye);
+    else R(ex, ey, 2, 4, eye);
+  }
+  if (o.point && o.point.p > .3) sparkle(o.point.x, o.point.y, C.amber, Math.sin(WT * 8) > 0);
+  return { top: by - 2 };
+}
+function mv(t, x0, y0, segs) {
+  let x = x0, y = y0, dir = 1, land = -9;
+  for (const [a, b, nx, ny, h = 0] of segs) {
+    if (t < a) break;
+    if (Math.abs(nx - x) > .5) dir = nx > x ? 1 : -1;
+    if (t < b) { const p = clamp((t - a) / (b - a)), e = h ? p : E.inOut(p); return { x: lerp(x, nx, e), y: lerp(y, ny, e) - (h ? 4 * h * p * (1 - p) : 0), dir, walk: !h && Math.abs(nx - x) > .5, air: !!h || (ny > y && !h && y < GY - 2), since: 9 }; }
+    if (h || y < GY - 2) land = b; x = nx; y = ny;
+  }
+  return { x, y, dir, walk: false, air: false, since: t - land };
+}
+const pt = (t, a, b, x, y) => (t > a && t < b) ? { x, y, p: E.out(P(t, a, a + .4)) * (1 - E.in(P(t, b - .35, b))) } : null;
+
+/* ================= background ================= */
+const STARS = (() => { const r = rng(9); return Array.from({ length: 70 }, () => ({ x: r() * 400, y: r() * 95, b: r() })); })();
+let HOLES = [];
+function bg(cam) {
+  const bands = ["#0a0f22", "#0d1328", "#10172f", "#141a36", "#181c3d", "#1d1e44", "#23204b", "#2b2350"];
+  bands.forEach((c, k) => { L.fillStyle = c; L.fillRect(0, k * 20, LW, 20); if (k) for (let x = k % 2; x < LW; x += 2) L.fillRect(x, k * 20 - 1, 1, 1); });
+  for (const s of STARS) { const sx = ((s.x - cam * .04) % 400 + 400) % 400 - 40; if (sx < 0 || sx > LW) continue; const tw = Math.sin(WT * 2 + s.b * 40); R(sx, s.y, 1, 1, tw > .7 ? "#ffffff" : tw > -.2 ? "#9fb4dd" : "#4a5a86"); if (tw > .93) sparkle(sx, s.y, "#cfe3ff"); }
+  disc(266, 26, 9, "#f2ead0"); disc(270, 23, 7, "#e3d9b8"); R(262, 24, 2, 2, "#d2c7a2"); R(268, 30, 3, 2, "#d2c7a2");
+  for (let sx = 0; sx < LW; sx += 2) { const wx = sx + cam * .15; const h = Math.round((26 + 10 * Math.sin(wx * .023) + 7 * Math.sin(wx * .061 + 1.3) + 3 * Math.sin(wx * .17)) / 2) * 2; L.fillStyle = "#1a2142"; L.fillRect(sx, 130 - h, 2, h + 20); }
+  for (let sx = 0; sx < LW; sx += 2) { const wx = sx + cam * .4; const h = Math.round((12 + 7 * Math.sin(wx * .031 + 2) + 4 * Math.sin(wx * .083)) / 2) * 2; L.fillStyle = "#212b4d"; L.fillRect(sx, 146 - h, 2, h + 4); if (hash(Math.floor(wx / 2)) % 37 === 0) { L.fillStyle = Math.sin(WT * 3 + wx) > 0 ? "#f2d27a" : "#c9a75a"; L.fillRect(sx, 146 - h - 3, 1, 1); } }
+}
+function ground(cam) {
+  for (let wx = Math.floor(cam) - 2; wx < cam + LW + 2; wx++) {
+    if (HOLES.some(([a, b]) => wx >= a && wx < b)) continue;
+    L.fillStyle = "#24365a"; L.fillRect(wx, GY, 1, LH - GY);
+    L.fillStyle = ((wx >> 2) & 1) ? "#5a86b4" : "#4d78a6"; L.fillRect(wx, GY, 1, 2);
+    if ((wx & 15) === 0) { L.fillStyle = "#1b2a47"; L.fillRect(wx, GY + 2, 1, LH); }
+    const hh = hash(wx); if (hh % 29 === 0) { L.fillStyle = "#3d5f8c"; L.fillRect(wx, GY + 7 + hh % 14, 2, 2); }
+    if (hh % 53 === 0) { L.fillStyle = "#3f8a72"; L.fillRect(wx, GY - 2, 1, 2); L.fillRect(wx + 1, GY - 1, 1, 1); }
+  }
+}
+
+/* =================================================================
+   STAGES 0–3
+   ================================================================= */
+const S = [];
+const GLY5 = {
+  A: [" ### ", "#   #", "#   #", "#####", "#   #", "#   #", "#   #"],
+  C: [" ####", "#    ", "#    ", "#    ", "#    ", "#    ", " ####"],
+  L: ["#    ", "#    ", "#    ", "#    ", "#    ", "#    ", "#####"],
+  t: ["  #  ", "  #  ", "#####", "  #  ", "  #  ", "  #  ", "   ##"],
+  "?": [" ### ", "#   #", "    #", "   # ", "  #  ", "     ", "  #  "],
+};
+const LETCOL = ["#7fb8e8", "#74C7A5", "#B3A8E6", "#F2A65A"];
+const TITLE = (() => { const out = [], r = rng(4); "ACLt".split("").forEach((ch, li) => GLY5[ch].forEach((row, ry) => [...row].forEach((c, rx) => { if (c === "#") out.push({ x: 90 + li * 37 + rx * 6, y: 24 + ry * 6, col: LETCOL[li], ts: .1 + (6 - ry) * .16 + li * .05 + r() * .06 }); }))); return out; })();
+function titleBlocks(t) { for (const b of TITLE) { const p = P(t, b.ts, b.ts + .42); if (p <= 0) continue; let y = lerp(b.y - 160, b.y, E.in(p)); if (t > b.ts + .42 && t < b.ts + .52) y -= 1; bevel(b.x, y, 6, 6, b.col, shade(b.col, .4), shade(b.col, -.4)); } }
+
+/* ---- 0 · title ---- */
+S.push({
+  name: "ACLt", sub: "开场", ref: "README.md", dur: 13, mood: "intro",
+  fx: [...[0, 1, 2, 3, 4, 5, 6].map(k => [.55 + k * .16, "thunk"]), [2.3, "fall"], [2.75, "land"], [6.6, "jump"], [7.1, "land"], [9.6, "pop"]],
+  cues: [
+    { at: 3.4, b: "嗨！我是 Claude～", say: "嗨！我是 Claude。今天我来当导游，带你逛逛 ACLt 的像素世界！" },
+    { at: 7.4, b: "出发吧！", say: "ACLt 是一套开放的分布式计算协议，名字的灵感来自 accurate，也就是“准确”。走，出发！" },
+  ],
+  who(t) { const m = mv(t, 262, -40, [[2.3, 2.75, 262, GY], [6.6, 7.1, 262, GY, 10], [11.2, 12.4, 290, GY]]); return { ...m, wave: t > 3.3 && t < 5.6, eyes: (t > 3.3 && t < 5.6) || (t > 6.6 && t < 8) ? "happy" : "n", point: pt(t, 8.2, 10.6, 304, 130) }; },
+  draw(t) {
+    titleBlocks(t);
+    if (t > 1.9) { const r = rng(50); for (let k = 0; k < 12; k++) { const x = 84 + r() * 154, y = 16 + r() * 56, ph = r() * 9; if (Math.sin(WT * 3 + ph) > .75) sparkle(x, y, k % 3 ? C.paper : C.gold, Math.sin(WT * 3 + ph) > .93); } }
+    TX("一个开放的分布式计算协议", 160, 84, { size: 30, a: P(t, 2, 2.8) });
+    TX("ACLt PROTOCOL", 160, 97, { font: "px", size: 11, color: C.mute, a: P(t, 2.4, 3.2), shadow: false });
+    const sp = E.back(P(t, 9.6, 10.1));
+    if (sp > 0) { R(302, GY - 20 * sp, 2, 20 * sp, C.wood2); if (sp > .6) { bevel(292, GY - 24, 24, 9, C.wood, "#b07a54", C.wood2); R(310, GY - 21, 2, 3, C.paper); R(312, GY - 20, 1, 1, C.paper); TX("出发", 302, GY - 19.5, { size: 13, color: C.paper }); } }
+    for (const [x, c] of [[40, "#e6a0c4"], [58, C.gold], [212, "#e6a0c4"], [246, C.gold]]) { R(x, GY - 3, 1, 3, "#3f8a72"); R(x - 1, GY - 5, 3, 2, c); }
+  },
+});
+
+/* ---- 1 · market ---- */
+const MKT = [[86, C.sage, { ant: 1 }], [110, C.violet, {}], [134, "#e6a0c4", { shades: 1 }], [158, "#7fd6d0", {}], [182, C.gold, {}], [204, "#a3c4f3", { mask: 1 }]];
+S.push({
+  name: "开放的算力集市", sub: "谁都能来贡献算力", ref: "docs/00-overview/project-overview.md", dur: A + 14, mood: "main",
+  fx: [[A + 3, "pops"], [A + 5.6, "hmm"], [A + 9.4, "powerup"]],
+  cues: [
+    { at: A + .3, b: "欢迎来到算力集市！", say: "这里是开放的算力集市：有人带着计算任务来，任何人都可以贡献算力接活。" },
+    { at: A + 5.4, b: "可是……凭什么信？", say: "可是大家互不认识。算出来的结果，凭什么让人相信？" },
+    { at: A + 9.6, b: "答案：一套公开规则！", say: "ACLt 的答案是一套谁都能检查的公开规则。我们一关一关来看！" },
+  ],
+  who(t) { const z = Z(1); return { ...mv(t, z + 268, GY, []), point: pt(t, A + .5, A + 2.6, z + 30, GY - 26) || pt(t, A + 3.2, A + 5.2, z + 150, GY - 22) || pt(t, A + 10, A + 12, z + 150, 46), eyes: t > A + 5.6 && t < A + 7.4 ? "wow" : t > A + 10.4 ? "happy" : "n", look: -1, dir: -1 }; },
+  draw(t) {
+    const z = Z(1);
+    R(z + 14, 30, 2, GY - 30, C.wood2); R(z + 74, 30, 2, GY - 30, C.wood2);
+    R(z + 16, 33, 58, 9, "#c0564a"); for (let k = 0; k < 58; k += 4) R(z + 16 + k, 42, 2, 1, "#c0564a");
+    TX("算力集市", z + 45, 37.5, { size: 17 });
+    for (const lx of [z + 28, z + 60]) { R(lx, 43, 1, 4, "#c9c9d6"); disc(lx, 50, 3, C.coral); R(lx - 1, 48, 1, 1, "#ffb3a6"); GLOW(lx, 50, 14, "255,140,110", .45); }
+    reqr(z + 30, GY, { look: 1 }); orb(z + 30, GY - 26);
+    TX("出任务的人", z + 30, GY + 11, { size: 14, color: C.mute });
+    MKT.forEach(([bx, c, acc], k) => {
+      const ph = WT * .7 + k * 1.9, x = z + bx + Math.sin(ph) * 7, hop = t > A + 3 + k * .15 && t < A + 3.3 + k * .15 ? 2 : 0;
+      crit(x, GY, { c, walk: Math.abs(Math.cos(ph)) > .3, look: Math.cos(ph), hop, eyes: t > A + 5.6 && t < A + 9 ? "wow" : "n", ...acc });
+      const qa = P(t, A + 3 + k * .15, A + 3.25 + k * .15) * (1 - P(t, A + 9.3, A + 9.6));
+      pbub(x, GY - 22 - Math.sin(WT * 4 + k), "?", qa);
+    });
+    TX("贡献算力的陌生人", z + 146, GY + 11, { size: 14, color: C.mute });
+    if (t > A + 5.4 && t < A + 10.1) {
+      const sh = E.in(P(t, A + 9.3, A + 10)); let idx = 0;
+      GLY5["?"].forEach((row, ry) => [...row].forEach((ch, rx) => { if (ch !== "#") return; const a = E.back(P(t, A + 5.4 + idx * .04, A + 5.7 + idx * .04)); idx++; if (a <= 0) return;
+        const bx = z + 128 + rx * 5 + Math.sin(WT * 3) * 2, by = 16 + ry * 5 + Math.sin(WT * 4 + rx) * .8;
+        const x = lerp(bx, z + 140, sh), y = lerp(by, 34, sh), s = 5 * (1 - sh) * Math.min(1, a);
+        bevel(x, y, s, s, C.amber, "#ffd29a", "#b36a24"); }));
+    }
+    const bk = E.back(P(t, A + 9.9, A + 10.4));
+    if (bk > 0) pop(z + 140, 40, bk, () => { const by = 40 + Math.sin(WT * 2.5) * 2; bevel(z + 127, by - 9, 26, 18, "#6b4fa0", "#9b7fd0", "#3f2d63"); R(z + 129, by - 7, 2, 14, C.paper); R(z + 136, by - 4, 12, 1, C.gold); R(z + 136, by - 1, 10, 1, C.gold); R(z + 136, by + 2, 12, 1, C.gold); GLOW(z + 140, by, 40, "190,160,255", .55); });
+    TX("公开规则", z + 140, 58, { size: 17, color: C.violet, a: P(t, A + 10.3, A + 10.7) });
+  },
+});
+
+/* ---- 2 · razor & bridge ---- */
+const TOWER = ["调度方", "分配方", "验证方", "委员会", "基金会"], TOWC = ["#6b7489", "#7a6b89", "#5f7f86", "#86735f", "#6b6b86"], FLAGC = [C.coral, C.amber, C.sage, C.violet, "#7fb8e8"];
+HOLES.push([Z(2) + 110, Z(2) + 210]);
+function castle(x, y, w, h, col, flag) {
+  bevel(x, y + 3, w, h - 3, col, shade(col, .25), shade(col, -.35));
+  for (let k = 0; k < w; k += 6) R(x + k, y, 3, 3, col);
+  R(x + w / 2 - 3, y + h - 7, 6, 7, "#1a2030"); R(x + 4, y + 7, 2, 3, C.gold); R(x + w - 6, y + 7, 2, 3, C.gold);
+  R(x + w - 3, y - 7, 1, 7, "#c9c9d6"); const wv = Math.floor(WT * 4) % 2; R(x + w - 2, y - 7 + wv, 5, 3, flag);
+}
+const PATH2 = z => { const pts = [{ x: z + 62, y: GY - 22 }]; TOWER.forEach((_, k) => pts.push({ x: z + 160 + (k % 2 ? 26 : -26), y: GY + 14 - (k + 1) * 18 + 9 })); pts.push({ x: z + 250, y: GY - 18 }); return pts; };
+S.push({
+  name: "剃刀与桥", sub: "如无必要，勿增实体", ref: "docs/05-decisions/ADR-0001-no-unnecessary-entities.md", dur: A + 15.4, mood: "main",
+  fx: [...[1, 2, 3, 4, 5].map(k => [A + .8 + k * .7, "toll"]), [A + 5.4, "fall"], [A + 6, "slash"], [A + 6.3, "crumble"], [A + 8, "build"], [A + 12, "chime"]],
+  shakes: [[A + 6.05, .6, 3]], flashes: [[A + 6.05, .35]],
+  cues: [
+    { at: A + .3, b: "过河要找一堆中间人……", say: "以前要过这条河，得经过一层层中间机构：调度方、验证方、委员会……每一层都收过路费，还握着特权。" },
+    { at: A + 5.2, b: "如无必要，勿增实体！", say: "ACLt 的第一条原则：如无必要，勿增实体。咔嚓！" },
+    { at: A + 9.6, b: "规则铺成桥，谁都能走。", say: "能写成公开规则的事，就铺成一座谁都能走的桥。最后只剩两种角色：出任务的 Requester，和出算力的 Provider。" },
+  ],
+  who(t) { const z = Z(2); const m = mv(t, z + 285, GY, [[A + 5.2, A + 5.8, z + 285, GY, 16]]); return { ...m, both: t > A + 5.2 && t < A + 6.4, point: pt(t, A + .6, A + 3, z + 160, 100), eyes: t > A + 5.2 && t < A + 6.6 ? "wow" : t > A + 12 ? "happy" : "n", dir: -1 }; },
+  draw(t) {
+    const z = Z(2), cut = A + 6.1;
+    R(z + 110, GY, 100, LH - GY, "#080c1a"); R(z + 108, GY, 2, LH, "#3a5578"); R(z + 210, GY, 2, LH, "#3a5578");
+    for (let x = z + 112; x < z + 208; x += 5) R(x + (Math.floor(WT * 6) % 3), 175, 2, 1, "#2d4a70");
+    const pts = PATH2(z);
+    if (t < cut) {
+      for (let k = 0; k < pts.length - 1; k++) { const a = pts[k], b = pts[k + 1]; for (let s = 0; s < 1; s += .08) if (Math.floor(s / .08) % 2 === 0) R(lerp(a.x, b.x, s), lerp(a.y, b.y, s), 1, 1, hexA(C.paper, .35)); }
+    }
+    TOWER.forEach((n, k) => {
+      const y0 = GY + 14 - (k + 1) * 18;
+      if (t < cut) { const x = z + 140 + Math.sin(WT * 1.6) * k * .7 * (1 + P(t, A + 2, A + 5)); castle(x, y0, 40, 18, TOWC[k], FLAGC[k]); TX(n, x + 20, y0 + 11, { size: 15 }); if (Math.sin(WT * 4 + k) > 0) coinPx(x + (k % 2 ? 46 : -6), y0 + 8, k); }
+      else { const s = P(t, cut, cut + 1.5); if (s >= 1) return; for (const side of [-1, 1]) { L.save(); L.beginPath(); L.rect(z + 140 + (side < 0 ? -40 : 20) + side * s * 14, y0 + s * s * (110 + k * 8) - 10, 60, 30); L.clip(); L.translate(side * s * 14, s * s * (110 + k * 8)); castle(z + 140, y0, 40, 18, TOWC[k], FLAGC[k]); L.restore(); } const r = rng(k + 3); for (let q = 0; q < 8; q++) R(z + 160 + (r() - .5) * 60 * s, y0 + 9 + r() * 40 * s + s * s * 60, 2, 2, q % 2 ? TOWC[k] : C.paper); }
+    });
+    if (t > A + .8 && t < cut) { const seg = Math.min(pts.length - 2, Math.floor((t - A - .8) / .7)), u = clamp((t - A - .8 - seg * .7) / .5); const a = pts[seg], b = pts[seg + 1]; const px = lerp(a.x, b.x, E.inOut(u)), py = lerp(a.y, b.y, E.inOut(u)); R(px - 3, py - 2, 7, 5, C.paper); R(px - 2, py - 1, 1, 1, C.coral); ln(px - 3, py - 2, px, py, "#c9bfae"); ln(px + 3, py - 2, px, py, "#c9bfae"); if (u >= 1 && seg >= 1 && seg <= 5) TX("-1", px + 8, py - 6, { font: "px", size: 9, color: C.gold }); }
+    const ra = E.back(P(t, A + 5.4, A + 5.9));
+    if (t > A + 5.4 && t < cut + .15) { let rx = z + 140, ry = lerp(-20, 22, ra); if (t > cut - .15) { const u = P(t, cut - .15, cut + .15); rx = lerp(z + 96, z + 196, u) - 13; ry = lerp(40, 172, u) - 3; } bevel(rx, ry, 26, 6, "#dfe6f2", "#ffffff", "#8e97ab"); R(rx, ry + 5, 26, 1, "#ffffff"); bevel(rx + 26, ry + 1, 16, 4, C.wood, "#b07a54", C.wood2); if (Math.sin(WT * 10) > .5) sparkle(rx + 4, ry + 1, "#ffffff", true); GLOW(rx + 13, ry + 3, 26, "230,240,255", .5); }
+    if (t > cut - .15 && t < cut + .7) { const u = P(t, cut - .15, cut + .05), fade = 1 - P(t, cut + .1, cut + .7); alpha(fade, () => { ln(z + 96, 40, lerp(z + 96, z + 196, u), lerp(40, 172, u), "#ffffff"); ln(z + 97, 40, lerp(z + 97, z + 197, u), lerp(40, 172, u), C.ice); }); }
+    for (let k = 0; k < 10; k++) { const p = E.back(P(t, A + 8 + k * .1, A + 8.5 + k * .1)); if (p <= 0) continue; bevel(z + 110 + k * 10, lerp(190, GY, p), 10, 6, "#5d5a8a", "#8f8ac2", "#3b3866"); }
+    ["plan()", "lease()", "verify()", "settle()"].forEach((s, k) => TX(s, z + 122.5 + k * 25, GY + 12, { font: "px", size: 8, color: C.violet, a: P(t, A + 9.4, A + 9.9), shadow: false }));
+    const m = E.inOut(P(t, A + 10, A + 11.8)), walking = t > A + 10 && t < A + 11.8;
+    const rx = lerp(z + 60, z + 150, m), px = lerp(z + 250, z + 172, m);
+    reqr(rx, GY, { walk: walking, look: 1 }); crit(px, GY, { c: C.sage, ant: 1, walk: walking, look: -1, eyes: t > A + 12.2 ? "happy" : "n" });
+    if (t < A + 12) orb(rx, GY - 26); else { const u = P(t, A + 12, A + 12.6); const q = arc({ x: rx, y: GY - 26 }, { x: px, y: GY - 22 }, 14, E.inOut(u)); orb(q.x, q.y); }
+    const hp = E.back(P(t, A + 12.6, A + 13)); if (hp > 0) pop(z + 161, GY - 34, hp, () => glyph("heart", z + 159, GY - 36, "#ff8fab"));
+    TX("Requester", rx - 4, GY - 36, { font: "px", size: 9, color: "#9cc6ec", align: "right", a: P(t, A + 9.6, A + 10), shadow: false });
+    TX("Provider", px + 4, GY - 28, { font: "px", size: 9, color: C.sage, align: "left", a: P(t, A + 9.6, A + 10), shadow: false });
+  },
+});
+function hexA(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${n >> 8 & 255},${n & 255},${a})`; }
+
+/* ---- 3 · frozen contract ---- */
+const ROWS3 = [["程序", "rir:9c1e…"], ["验证", "抽签复算"], ["截止", "48 小时"], ["预算", "≤ 100 点"]];
+S.push({
+  name: "冰封的约定", sub: "先承诺，后观察", ref: "docs/00-overview/design-principles.md · DP-04", dur: A + 15.4, mood: "main",
+  fx: [[A + .2, "whoosh"], [A + 4.2, "freeze"], [A + 5.8, "lock"], [A + 8.4, "pop"], [A + 9.6, "clang"], [A + 10.2, "clang"], [A + 10.8, "dizzy"], [A + 12.1, "pop"], [A + 12.6, "powerup"]],
+  shakes: [[A + 9.6, .25, 1.5], [A + 10.2, .25, 1.5]],
+  cues: [
+    { at: A + .3, b: "先把约定写清楚！", say: "第一步，先把约定写清楚：跑什么程序、怎么验证、什么时候截止、最多花多少钱。" },
+    { at: A + 4.1, b: "冻——住！", say: "然后，冻住！约定在结果出来之前就锁死，还会得到一个独一无二的编号。" },
+    { at: A + 8.6, b: "想偷改？敲不动～", say: "有人想偷偷改截止时间？敲不动的。真要改，只能重写一份新约定，换一个新编号。" },
+  ],
+  who(t) { const z = Z(3); const m = mv(t, z + 262, GY, [[A + 4.1, A + 4.6, z + 262, GY, 8]]); return { ...m, dir: -1, both: t > A + 4.1 && t < A + 5.6, eyes: t > A + 9.5 && t < A + 10.6 ? "wow" : t > A + 12.6 ? "happy" : "n", point: pt(t, A + .6, A + 3.4, z + 95, 92) || pt(t, A + 8.8, A + 9.5, z + 172, GY - 16) }; },
+  draw(t) {
+    const z = Z(3);
+    reqr(z + 22, GY, { look: 1 });
+    R(z + 38, 58, 2, GY - 58, C.wood2); R(z + 150, 58, 2, GY - 58, C.wood2);
+    const hh = 68 * E.out(P(t, A + .2, A + 1));
+    R(z + 38, 62, 114, 4, "#d8cdb8"); R(z + 38, 62, 114, 1, "#efe6d4");
+    if (hh > 0) { R(z + 40, 66, 110, hh, C.paper); R(z + 38, 66 + hh, 114, 4, "#d8cdb8"); }
+    TX("约定书", z + 95, 73, { size: 15, color: C.ink, shadow: false, a: P(t, A + .8, A + 1.1) });
+    const flick = (t > A + 9.6 && t < A + 9.85) || (t > A + 10.2 && t < A + 10.45);
+    ROWS3.forEach(([k, v], r) => { const y = 86 + r * 12; if (66 + hh < y + 4) return; const n = Math.floor((t - A - 1 - r * .55) * 14); if (n <= 0) return; const val = r === 2 && flick ? "72 小时?" : v; TX([...(k + "  " + val)].slice(0, n).join(""), z + 48, y, { size: 15, color: r === 2 && flick ? C.coral : C.ink, align: "left", shadow: false }); });
+    if (t > A + 4.2 && t < A + 5.2) for (let k = 0; k < 14; k++) { const u = P(t, A + 4.2 + k * .05, A + 4.8 + k * .05); if (u <= 0 || u >= 1) continue; const x = lerp(z + 244, z + 95, u), y = lerp(GY - 18, 98, u) + Math.sin(u * 9 + k) * 6; sparkle(x, y, C.ice, k % 3 === 0); }
+    iceBox(z + 34, 56, 122, 80, E.inOut(P(t, A + 4.8, A + 5.6)), 7);
+    const lk = E.back(P(t, A + 5.8, A + 6.2)); if (lk > 0) pop(z + 95, 54, lk, () => lockSpr(z + 95, 54));
+    if (t > A + 5.8) { const p = P(t, A + 5.8, A + 6.8), tgt = "7f3a92"; let s = ""; const r = rng(Math.floor(WT * 18)); for (let i = 0; i < tgt.length; i++) s += i < p * tgt.length ? tgt[i] : "0123456789abcdef"[Math.floor(r() * 16)]; TX("No." + s, z + 95, 38, { font: "px", size: 11, color: C.ice }); }
+    // sneaky
+    if (t > A + 8.4 && t < A + 12.8) {
+      const rise = (1 - E.out(P(t, A + 8.4, A + 8.9))) * 14 + E.in(P(t, A + 12.1, A + 12.6)) * 14, x = z + 172;
+      R(x - 8, GY, 16, 2, "#05070d");
+      L.save(); L.beginPath(); L.rect(x - 20, 0, 40, GY); L.clip();
+      crit(x, GY + rise, { c: "#6b5a8a", mask: 1, look: -1, eyes: t > A + 10.6 && t < A + 12.1 ? "x" : "n" });
+      const up = (t > A + 9 && t < A + 9.6) || (t > A + 9.85 && t < A + 10.2), down = (t >= A + 9.6 && t < A + 9.85) || (t >= A + 10.2 && t < A + 10.6);
+      if (up) { R(x + 4, GY - 24 + rise, 1, 10, C.wood); R(x + 1, GY - 27 + rise, 7, 3, "#9aa3b5"); }
+      else if (down) { R(x - 12, GY - 12 + rise, 10, 1, C.wood); R(x - 16, GY - 15 + rise, 4, 7, "#9aa3b5"); }
+      L.restore();
+      for (const st of [A + 9.6, A + 10.2]) { const u = P(t, st, st + .35); if (u > 0 && u < 1) { const r = rng(st * 10); for (let k = 0; k < 10; k++) { const a = Math.PI * (.5 + r()), sp = 8 + r() * 14; R(z + 156 + Math.cos(a) * sp * u, GY - 12 + Math.sin(a) * sp * u, 1, 1, k % 2 ? C.gold : "#ffffff"); } } }
+      if (t > A + 10.6 && t < A + 12.1) for (let k = 0; k < 3; k++) { const a = WT * 6 + k * 2.1; R(x + Math.cos(a) * 6, GY - 19 + Math.sin(a) * 2, 1, 1, C.gold); }
+    }
+    const nc = E.back(P(t, A + 12.6, A + 13.1));
+    if (nc > 0) pop(z + 186, GY - 10, nc, () => { R(z + 178, GY - 18, 16, 16, C.paper); for (let k = 0; k < 4; k++) R(z + 180, GY - 15 + k * 3, 10 - (k % 2) * 3, 1, "#9a8f7c"); iceBox(z + 176, GY - 20, 20, 20, 1, 3); lockSpr(z + 186, GY - 21); });
+    TX("新约定 No.b2046e", z + 186, GY - 36, { size: 13, color: C.ice, a: P(t, A + 13, A + 13.4) });
+  },
+});
+
+/* =================================================================
+   STAGES 4–6
+   ================================================================= */
+/* ---- 4 · split, dispatch, execute ---- */
+const HUTS = [102, 142, 182, 222];
+const PIECES = [[[0, 0], [1, 0], [2, 0], [1, 1]], [[0, 0], [1, 0], [2, 0], [3, 0]], [[0, 0], [0, 1], [0, 2], [1, 2]], [[1, 0], [2, 0], [0, 1], [1, 1]]];
+const PCOL = [C.violet, C.frost, C.amber, C.sage];
+const PVC = [C.sage, "#e6a0c4", "#7fd6d0", C.gold];
+function piece(x, y, k) { const c = PCOL[k]; PIECES[k].forEach(([i, j]) => bevel(x + i * 3, y + j * 3, 3, 3, c, shade(c, .45), shade(c, -.4))); }
+function hut(x, lit, done) {
+  bevel(x - 13, GY - 16, 26, 16, C.wood, "#b07a54", C.wood2);
+  for (let k = 0; k < 9; k++) R(x - 15 + k, GY - 17 - k, 30 - 2 * k, 1, k % 2 ? "#a94b40" : "#c0564a");
+  R(x + 5, GY - 28, 4, 9, C.stone); R(x - 3, GY - 9, 6, 9, "#2a1a10");
+  R(x + 6, GY - 12, 5, 4, lit ? C.gold : "#2a3550"); if (lit) GLOW(x + 8, GY - 10, 10, "255,210,110", .5);
+  if (done) R(x - 2, GY - 6, 1, 1, C.gold);
+}
+function bar(x, y, w, p, c) { R(x, y, w, 3, "#0b0f1a"); R(x, y, w, 1, "#2a3656"); if (p > 0) R(x, y, Math.max(1, w * clamp(p)), 3, c); }
+function mailbox(x, flag) { R(x - 1, GY - 14, 2, 14, C.wood2); bevel(x - 8, GY - 24, 16, 10, "#5c8dd6", "#8fb6ee", "#3a5f9e"); R(x - 5, GY - 21, 10, 1, C.ink); R(x + 8, GY - 24 - (flag ? 5 : 0), 1, 7, "#c9c9d6"); R(x + 9, GY - 24 - (flag ? 5 : 0), 4, 3, C.coral); }
+S.push({
+  name: "拆分 · 派发 · 执行", sub: "有期限的租约", ref: "docs/02-architecture/task-lifecycle.md", dur: A + 17.4, mood: "main",
+  fx: [[A + .1, "jump"], [A + .8, "land"], [A + 1, "crack"], [A + 1.4, "split"], ...[0, 1, 2, 3].map(k => [A + 2.2 + k * .12, "catch"]), [A + 2, "jump"], [A + 4.3, "pops"], [A + 7.5, "zzz"], [A + 9, "alarm"], [A + 9.3, "teleport"], [A + 9.9, "catch"], [A + 12, "pop"], [A + 12.6, "boing"], [A + 13.1, "bonk"], ...[0, 1, 2, 3].map(k => [A + 14.5 + k * .3, "ding"])],
+  shakes: [[A + 1.4, .35, 2]],
+  cues: [
+    { at: A + .9, b: "大任务，拆开！", say: "约定冻好后，大任务被拆成小块。拆法也是公开规则，谁来拆，结果都一样。" },
+    { at: A + 4.3, b: "领走，带上沙漏！", say: "Provider 们领走任务块，每块都附带一个沙漏，也就是有期限的租约。" },
+    { at: A + 7.6, b: "睡着了？换人！", say: "有人睡着了？沙漏一漏完，任务块自动转给别人重做。" },
+    { at: A + 12, b: "迟到的不算数。", say: "睡醒才交的旧结果？直接弹回去。过期的租约，不算数。" },
+  ],
+  who(t) { const z = Z(4); const m = mv(t, z + 295, GY, [[A + .1, A + .8, z + 46, GY, 40], [A + 2, A + 2.7, z + 295, GY, 30]]); return { ...m, both: t > A + .85 && t < A + 1.5, point: pt(t, A + 4.6, A + 6.6, z + 128, GY - 44) || pt(t, A + 7.8, A + 9.6, z + 142, GY - 26) || pt(t, A + 12.4, A + 14, z + 76, GY - 18), eyes: t > A + 12.6 && t < A + 13.4 ? "wow" : t > A + 14.6 ? "happy" : "n", dir: m.walk || m.air ? m.dir : -1 }; },
+  draw(t) {
+    const z = Z(4), smash = A + 1.4;
+    bevel(z + 18, GY - 10, 20, 10, C.stone);
+    if (t < smash) { R(z + 20, GY - 28, 16, 16, C.paper); iceBox(z + 18, GY - 30, 20, 20, 1, 5); lockSpr(z + 28, GY - 31); if (t > A + 1) { const u = P(t, A + 1, smash); ln(z + 28, GY - 30, z + 28 - 4 * u, GY - 22, "#ffffff"); ln(z + 28 - 4 * u, GY - 22, z + 30, GY - 14 * u - 8, "#ffffff"); } }
+    else if (t < smash + .5) { const u = P(t, smash, smash + .5), r = rng(8); for (let k = 0; k < 14; k++) { const a = r() * 6.28, sp = 10 + r() * 20; R(z + 28 + Math.cos(a) * sp * u, GY - 20 + Math.sin(a) * sp * u + 20 * u * u, 2, 2, k % 2 ? C.ice : "#ffffff"); } }
+    mailbox(z + 64, t > A + 14.6);
+    TX("收件口", z + 64, GY + 11, { size: 13, color: C.mute });
+    const sleepy = t > A + 7.5 && t < A + 12;
+    HUTS.forEach((hx, k) => {
+      const x = z + hx, inside = t > A + 5.1 && !(k === 1 && t > A + 12), done = k !== 1 && t > A + 14.3;
+      hut(x, inside && !(k === 1 && sleepy) && !(k === 1 && t > A + 9), done);
+      smoke(x + 7, GY - 30, inside && t < A + 14.3 && !(k === 1 && t > A + 7.5), "#8a8fb0", k);
+      if (done) for (let q = 0; q < 2; q++) { const u = (WT * .7 + q / 2) % 1; alpha(1 - u, () => sparkle(x + 7, GY - 32 - u * 14, C.gold)); }
+      // provider standing / walking in
+      if (t < A + 5.1) { const wx = lerp(x + 10, x, E.inOut(P(t, A + 4.3, A + 4.8))); crit(wx, GY, { c: PVC[k], a: 1 - P(t, A + 4.8, A + 5.1), walk: t > A + 4.3 && t < A + 4.8, look: -1, hop: t > A + 2.2 + k * .12 && t < A + 2.4 + k * .12 ? 2 : 0, eyes: t < A + 1.6 ? "n" : "happy" }); }
+      // the piece
+      const t0 = smash + .05 + k * .12, a = { x: z + 26, y: GY - 22 }, b = { x: x + 7, y: GY - 21 };
+      if (t > t0 && t < A + 5.1) { const u = P(t, t0, t0 + .7), q = arc(a, b, 36, E.out(u)); piece(q.x - 4, q.y - 3, k); }
+      if (t > A + 5.1) {
+        const lease = k === 1 ? 1 - P(t, A + 5.1, A + 9) : 1 - .7 * P(t, A + 5.1, A + 14.3), prog = k === 1 ? .35 * P(t, A + 5.1, A + 7.5) : P(t, A + 5.1, A + 14.3);
+        if (!(k === 1 && t > A + 9.4)) { hourglass(x - 14, GY - 44, lease, k === 1 && t > A + 8.2 ? C.coral : "#f2d27a", k === 1 && t > A + 8.2 ? C.coral : C.gold); bar(x - 7, GY - 41, 16, prog, k === 1 && t > A + 7.5 ? C.coral : C.sage); }
+        if (k === 1 && t > A + 9 && t < A + 9.6) { const u = P(t, A + 9, A + 9.6), r = rng(4); for (let q = 0; q < 8; q++) R(x - 12 + (r() - .5) * 16 * u, GY - 40 + r() * 10 * u, 1, 1, C.coral); }
+      }
+    });
+    if (sleepy) for (let q = 0; q < 3; q++) { const u = (WT * .5 + q / 3) % 1; TX("Z", z + 150 + u * 10, GY - 30 - u * 20, { size: 12 + q * 4, color: C.frost, a: 1 - u }); }
+    // teleport to the bench
+    R(z + 250, GY - 6, 20, 2, C.wood); R(z + 251, GY - 4, 2, 4, C.wood2); R(z + 267, GY - 4, 2, 4, C.wood2);
+    const p5x = z + 258;
+    if (t > A + 9.3 && t < A + 9.9) { const u = P(t, A + 9.3, A + 9.9), q = arc({ x: z + 142, y: GY - 30 }, { x: p5x, y: GY - 24 }, 30, E.inOut(u)); piece(q.x - 4, q.y - 3, 3); for (let s = 0; s < 5; s++) sparkle(q.x - s * 5 * (1 - u), q.y + Math.sin(s + WT * 9) * 3, C.sage); alpha(1 - u, () => R(z + 141, 20, 3, GY - 40, "#d9fff0")); }
+    crit(p5x, GY - 6, { c: "#a3c4f3", hop: t > A + 9.6 && t < A + 9.9 ? 3 : 0, eyes: t > A + 9.4 && t < A + 10 ? "wow" : t > A + 14.4 ? "happy" : "n", look: t > A + 9.3 ? -1 : 0 });
+    if (t > A + 9.4 && t < A + 10) pbub(p5x, GY - 30, "!", 1);
+    if (t > A + 9.9) { R(p5x + 6, GY - 10, 8, 4, "#3a4560"); R(p5x + 7, GY - 9, 6, 2, C.frost); bar(p5x - 8, GY - 28, 16, P(t, A + 10, A + 14.3), C.sage); gearPx(p5x + 13, GY - 22, t < A + 14.3 ? WT * 3 : 0, C.sage); }
+    // P2 wakes and throws a stale result
+    if (t > A + 12) {
+      const px = z + 150, dz = t > A + 13.1;
+      crit(px, GY, { c: PVC[1], eyes: dz ? "x" : "wow", look: -1, hop: t < A + 12.2 ? 2 : 0 });
+      if (t < A + 12.3) pbub(px, GY - 22, "!", 1);
+      if (dz) for (let k = 0; k < 3; k++) { const a = WT * 6 + k * 2.1; R(px + Math.cos(a) * 6, GY - 17 + Math.sin(a) * 2, 1, 1, C.gold); }
+      const A2 = { x: px - 4, y: GY - 16 }, B2 = { x: z + 76, y: GY - 18 };
+      if (t > A + 12.2 && t < A + 13.1) { const goingOut = t < A + 12.6; const u = goingOut ? P(t, A + 12.2, A + 12.6) : P(t, A + 12.6, A + 13.1); const q = goingOut ? arc(A2, B2, 20, u) : arc(B2, { x: px, y: GY - 14 }, 24, u); disc(q.x, q.y, 2, "#c9a0ff"); R(q.x - 1, q.y - 1, 1, 1, "#ffffff"); }
+      const sh = win(t, A + 12.3, A + 13.2, .15); if (sh > 0) alpha(sh, () => { oval(z + 78, GY - 16, 3, 12, C.frost); oval(z + 79, GY - 16, 3, 12, "#ffffff"); GLOW(z + 78, GY - 16, 18, "160,215,250", .5); });
+      TX("过期的不算数", z + 72, GY - 52, { size: 14, color: C.coral, a: P(t, A + 12.6, A + 12.9) });
+    }
+    // results to the mailbox
+    [[z + 102, 0], [z + 182, 2], [z + 222, 3], [p5x, 4]].forEach(([sx], k) => { const u = P(t, A + 14.1 + k * .3, A + 14.5 + k * .3); if (u <= 0 || u >= 1) return; const q = arc({ x: sx, y: GY - 26 }, { x: z + 64, y: GY - 22 }, 26, E.inOut(u)); disc(q.x, q.y, 2, C.sage); GLOW(q.x, q.y, 10, "120,230,180", .6); });
+  },
+});
+
+/* ---- 5 · lottery verification ---- */
+const VG = 40, VB = 8, VQ = 28;
+function eproc(seq) { let e = 1, s = 0; const out = [0]; seq.forEach((x, n) => { const m = Math.max(VB - s, 0) / (VG - n), pa = Math.min(.95, Math.max(VQ - s, 0) / (VG - n)); e *= x ? (m <= 0 ? 1e4 : pa / m) : (1 - pa) / (1 - m); s += x; out.push(Math.log10(e)); }); return out; }
+const RA = [1, 1, 0, 1, 1], RB = [1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0], LA = eproc(RA), LB = eproc(RB);
+const BALLS = (() => { const r = rng(17), cols = [C.coral, C.gold, C.sage, C.frost, C.violet, "#e6a0c4", "#7fd6d0"]; return Array.from({ length: VG }, (_, i) => ({ a: r() * 6.28, r: 4 + r() * 21, c: cols[i % cols.length], sp: .5 + r() * .6 })); })();
+const tA = k => A + 3.6 + k * 1.15, tB = k => A + 11.6 + k * .5;
+const yL = l => 136 - (clamp(l, -1.2, 2.6) + 1.2) / 3.8 * 100;
+S.push({
+  name: "抽签验证", sub: "靠证据，不靠投票", ref: "docs/03-protocol/result-validation.md", dur: A + 20, mood: "main",
+  fx: [...RA.map((x, k) => [tA(k) - .3, "spin"]), ...RA.map((x, k) => [tA(k) + .35, x ? "check" : "cross"]), [A + 9.4, "fanfare"], [A + 9.4, "firework"], [A + 10.6, "swap"], ...RB.map((x, k) => [tB(k) + .2, x ? "check" : "cross"]), [A + 18, "shrug"]],
+  cues: [
+    { at: A + .3, b: "不投票，抽签！", say: "结果交上来了，怎么验证？不靠投票，靠抽签：从一大群互相独立的检查员里随机抽人复算，抽过的不放回去。" },
+    { at: A + 5, b: "证据一点点涨～", say: "每抽一位，证据就涨一点或掉一点。涨过那条线，才算可信！" },
+    { at: A + 10.8, b: "再来一个可疑的……", say: "再来一个说不清的结果……抽签次数用完了，证据还是不够。" },
+    { at: A + 18, b: "不知道，就说不知道。", say: "那就老实标成“不确定”。在 ACLt 里，不确定也是一个诚实的结局。" },
+  ],
+  who(t) { const z = Z(5); return { ...mv(t, z + 278, GY, [[A + 9.4, A + 9.9, z + 278, GY, 12]]), dir: -1, point: pt(t, A + .5, A + 2.6, z + 70, 84) || pt(t, A + 5.2, A + 7.4, z + 212, 70), eyes: t > A + 9.4 && t < A + 11 ? "happy" : "n", shrug: t > A + 18 }; },
+  draw(t) {
+    const z = Z(5), runB = t > A + 11.2, seq = runB ? RB : RA, Lv = runB ? LB : LA, tk = runB ? tB : tA;
+    const fly = runB ? .2 : .35, hold = runB ? .15 : .45, toT = runB ? .2 : .3, reset = runB ? 0 : P(t, A + 10.6, A + 11.2);
+    // drum
+    let rot = WT * .6; for (let k = 0; k < seq.length; k++) rot += 3 * E.inOut(P(t, tk(k) - .45, tk(k)));
+    const cx = z + 70, cy = 92, drawn = seq.filter((_, k) => t > tk(k)).length * (1 - reset);
+    R(cx - 22, 118, 2, GY - 118, C.stone); R(cx + 20, 118, 2, GY - 118, C.stone); R(cx - 26, GY - 2, 54, 2, C.stone);
+    disc(cx, cy, 30, "#141b33");
+    BALLS.forEach((b, i) => { if (i < Math.round(drawn)) return; const a = b.a + rot * b.sp; disc(cx + Math.cos(a) * b.r, cy + Math.sin(a) * b.r * .9 + 3, 1, b.c); });
+    for (let k = 0; k < 6; k++) { const a = rot + k * Math.PI / 3; ln(cx, cy, cx + Math.cos(a) * 29, cy + Math.sin(a) * 29, "#3a4566"); }
+    ring(cx, cy, 30, "#9aa3b5"); ring(cx, cy, 31, "#5b6478"); disc(cx, cy, 3, C.gold);
+    R(cx + 30, cy - 2, 6, 5, "#9aa3b5"); R(cx + 33, cy - 12, 2, 12, "#9aa3b5"); disc(cx + 34, cy - 13, 2, C.coral);
+    if (runB) TX(`剩余抽签 ${Math.max(0, 12 - RB.filter((_, k) => t > tk(k)).length)}`, cx, 54, { size: 15, color: C.amber }); else TX("检查员抽签机", cx, 54, { size: 15 });
+    // podium + result
+    bevel(z + 138, GY - 14, 24, 14, C.stone);
+    const rc = runB ? C.violet : t > A + 9.4 ? C.sage : C.frost; bevel(z + 146, GY - 24, 8, 8, rc); GLOW(z + 150, GY - 20, 14, runB ? "190,160,255" : "160,230,200", .55);
+    if (runB) glyph("?", z + 149, GY - 23, C.ink);
+    // draws
+    for (let k = 0; k < seq.length; k++) {
+      const t0 = tk(k), b = BALLS[k], slot = { x: z + 14 + k * 8, y: GY - 3 };
+      if (t < t0 || (reset >= 1 && !runB)) continue;
+      const pod = { x: z + 150, y: GY - 30 };
+      let q;
+      if (t < t0 + fly) q = arc({ x: cx + 36, y: cy - 2 }, pod, 18, E.inOut(P(t, t0, t0 + fly)));
+      else if (t < t0 + fly + hold) { q = pod; glyph(seq[k] ? "v" : "x", pod.x - 2, pod.y - 10, seq[k] ? C.sage : C.coral); }
+      else q = arc(pod, slot, 16, E.inOut(P(t, t0 + fly + hold, t0 + fly + hold + toT)));
+      if (reset > 0) q = { x: lerp(q.x, cx, reset), y: lerp(q.y, cy, reset) };
+      disc(q.x, q.y, 2, b.c); R(q.x - 1, q.y - 1, 1, 1, "#ffffff");
+      if (t > t0 + fly + hold + toT && reset <= 0) glyph(seq[k] ? "v" : "x", slot.x - 2, slot.y - 8, seq[k] ? C.sage : C.coral);
+    }
+    TX("抽过的不放回", z + 58, GY + 11, { size: 13, color: C.mute, a: P(t, A + 4, A + 4.5) });
+    // meter
+    let lv = 0; for (let k = 0; k < seq.length; k++) { const u = E.out(P(t, tk(k) + fly, tk(k) + fly + .3)); if (u > 0) lv = Lv[k] + (Lv[k + 1] - Lv[k]) * u; }
+    if (!runB) lv *= 1 - reset;
+    const mc = runB ? C.frost : C.sage, yv = yL(lv), yth = yL(2);
+    R(z + 207, 30, 10, 107, "#0e1428"); R(z + 206, 30, 1, 107, "#9aa3b5"); R(z + 217, 30, 1, 107, "#9aa3b5"); R(z + 206, 29, 12, 1, "#9aa3b5");
+    R(z + 208, yv, 8, 137 - yv, mc); R(z + 208, yv, 8, 1, shade(mc, .5)); disc(z + 212, 141, 7, mc); ring(z + 212, 141, 8, "#9aa3b5");
+    for (let x = z + 200; x < z + 225; x += 3) R(x, yth, 2, 1, C.gold);
+    TX("可信线", z + 198, yth, { size: 14, color: C.gold, align: "right" });
+    GLOW(z + 212, yv, 18, runB ? "160,215,250" : "120,230,180", .4);
+    // outcomes
+    if (t > A + 9.4 && t < A + 11) { [[z + 212, 22, 0], [z + 178, 34, .5], [z + 238, 26, .9]].forEach(([x, y, d], k) => firework(x, y, A + 9.1 + d, t, 30 + k, [C.gold, C.sage, C.paper, C.coral])); }
+    TX("可信！", z + 168, 40, { size: 40, color: C.sage, a: P(t, A + 9.5, A + 9.7) * (1 - P(t, A + 10.6, A + 11)), sc: lerp(1.8, 1, E.out(P(t, A + 9.5, A + 9.8))), rot: -.12 });
+    if (t > A + 17.8) { const ca = P(t, A + 17.8, A + 18.2), cy2 = 104; alpha(ca, () => { disc(z + 144, cy2, 6, "#5b6478"); disc(z + 153, cy2 - 2, 7, "#6b7489"); disc(z + 161, cy2 + 1, 5, "#5b6478"); }); for (let k = 0; k < 4; k++) { const u = (WT * .9 + k / 4) % 1; alpha(ca * (1 - u), () => glyph("?", z + 144 + k * 5, cy2 + 6 + u * 18, C.frost)); } }
+    TX("不确定", z + 168, 40, { size: 40, color: C.frost, a: P(t, A + 18.1, A + 18.3), sc: lerp(1.8, 1, E.out(P(t, A + 18.1, A + 18.4))), rot: -.1 });
+  },
+});
+
+/* ---- 6 · invisible strings ---- */
+const PUPS = ["#e6a0c4", "#7fd6d0", C.gold, "#a3c4f3", "#c9a37a"];
+S.push({
+  name: "看不见的线", sub: "零押金 · 有上限 · 不数人头", ref: "docs/00-overview/design-principles.md · DP-06/08/09", dur: A + 18, mood: t => t > A + 5.4 && t < A + 10 ? "tense" : "main",
+  fx: [[A + 1.4, "pop"], [A + 2, "pop"], ...[0, 1, 2, 3, 4].map(k => [A + 2.6 + k * .45 + .5, k < 3 ? "thunk" : "boing"]), [A + 6.4, "reveal"], [A + 9, "pop"], [A + 9.4, "whoosh"], [A + 12.8, "jump"], [A + 13.1, "denied"], [A + 14.2, "powerup"]],
+  cues: [
+    { at: A + .3, b: "零押金，但背包有限！", say: "新来的 Provider 不用交押金。但背包格子有限：能接多少活、同时跑几个，都有硬上限。先把最坏的损失框住。" },
+    { at: A + 5.5, b: "咦？好像有线……", say: "这五个 Provider 看着各不相同……照一照，原来背后是同一个人在牵线！" },
+    { at: A + 9, b: "算作一个！", say: "ACLt 不数账号，按互相关联的集群来算。" },
+    { at: A + 11.6, b: "表现好≠王座", say: "表现再好，也只能换一个更大的背包，永远换不来裁决权。" },
+  ],
+  who(t) { const z = Z(6); const m = mv(t, z + 284, GY, [[A + 5.7, A + 6.3, z + 236, GY], [A + 10.2, A + 10.9, z + 284, GY]]); return { ...m, dir: -1, out: t > A + 6.3 && t < A + 10.1, point: pt(t, A + 1, A + 2.8, z + 56, GY - 30) || pt(t, A + 12.6, A + 14.4, z + 214, GY - 20), eyes: t > A + 6.4 && t < A + 7.6 ? "wow" : "n" }; },
+  draw(t) {
+    const z = Z(6);
+    // part 1: the gate and the backpack
+    R(z + 10, GY - 26, 3, 26, C.stone); R(z + 30, GY - 26, 3, 26, C.stone); bevel(z + 8, GY - 31, 27, 5, C.stone);
+    TX("入口", z + 21, GY - 37, { size: 13 });
+    const yx = lerp(z - 12, z + 56, E.inOut(P(t, A + .2, A + 1.4)));
+    if (t > A + 2) R(yx - 8, GY - 11, 3, 7, C.wood);
+    crit(yx, GY, { c: C.gold, walk: t > A + .2 && t < A + 1.4, look: 1, eyes: t > A + 4.5 && t < A + 5.5 ? "wow" : "n" });
+    TX("押金 0", yx, GY - 22, { size: 14, color: C.amber, a: P(t, A + 1.4, A + 1.7) * (1 - P(t, A + 2.2, A + 2.5)) });
+    if (t > A + 2) {
+      const sa = E.back(P(t, A + 2, A + 2.3));
+      pop(yx, GY - 31, sa, () => { for (let k = 0; k < 3; k++) { const sx = yx - 9 + k * 6; R(sx, GY - 34, 5, 5, "#0e1428"); R(sx, GY - 34, 5, 1, "#5b6478"); } });
+      const bh = win(t, A + 4.2, A + 4.9, .1); R(yx - 12, GY - 39, 24, 1, bh > 0 ? "#ffffff" : C.coral);
+      TX("硬上限", yx + 16, GY - 40, { size: 13, color: C.coral, align: "left", a: P(t, A + 2.6, A + 3) });
+      for (let k = 0; k < 5; k++) {
+        const tb = A + 2.6 + k * .45, u = P(t, tb, tb + .5); if (u <= 0) continue;
+        const col = PCOL[k % 4];
+        if (k < 3) { const y = lerp(0, GY - 34, E.in(u)); bevel(yx - 9 + k * 6, y, 5, 5, col); }
+        else { const v = P(t, tb + .5, tb + 1.2); if (v >= 1) continue; const y = u < 1 ? lerp(0, GY - 44, E.in(u)) : GY - 44 - Math.sin(v * Math.PI) * 10 + v * 30; const x = yx - 2 + (k === 3 ? -1 : 1) * v * 26; alpha(1 - v, () => bevel(x, y, 5, 5, col)); }
+      }
+    }
+    // part 2: puppets and the puppeteer
+    const rev = t > A + 6.4, cl = E.out(P(t, A + 9, A + 9.4));
+    const pa = t < A + 5.4 ? 0 : rev ? 1 - P(t, A + 9.4, A + 9.9) : .18;
+    if (pa > 0) alpha(pa, () => { disc(z + 118, 30, 7, "#3d3a5c"); disc(z + 128, 26, 9, "#45416a"); disc(z + 140, 30, 7, "#3d3a5c"); R(z + 122, 14, 12, 12, "#6b4fa0"); R(z + 121, 15, 14, 10, "#6b4fa0"); R(z + 125, 18, 2, 2, C.gold); R(z + 130, 18, 2, 2, C.gold); });
+    if (t > A + 9.4 && t < A + 10.2) { const u = P(t, A + 9.4, A + 10.2), r = rng(6); for (let k = 0; k < 16; k++) { const a = r() * 6.28; alpha(1 - u, () => R(z + 128 + Math.cos(a) * 20 * u, 22 + Math.sin(a) * 14 * u, 2, 2, "#8a6bc4")); } }
+    if (t > A + 6.3 && t < A + 10.1) { const fa = win(t, A + 6.3, A + 10.1, .2); L.save(); L.globalAlpha = .16 * fa; L.fillStyle = C.gold; L.beginPath(); L.moveTo(z + 222, GY - 14); L.lineTo(z + 80, 8); L.lineTo(z + 80, GY); L.closePath(); L.fill(); L.restore(); }
+    PUPS.forEach((c, k) => {
+      const x = z + 100 + k * 18, hop = t > A + 5.4 ? Math.abs(Math.sin(WT * 4)) * 2 : Math.abs(Math.sin(WT * 3 + k * 1.3)) * 1.5;
+      if (rev && pa > 0) alpha(pa, () => ln(z + (k < 2 ? 124 : k > 2 ? 132 : 128), 26, x, GY - 13 - hop, "#c9a7ff"));
+      crit(x, GY, { c, hop, eyes: rev && t < A + 9.4 ? "wow" : "n", look: k < 2 ? 1 : -1 });
+    });
+    if (cl > 0) { oval(z + 136, GY - 7, 46 * cl, 15 * cl, C.amber); oval(z + 136, GY - 7, 45 * cl, 14 * cl, shade(C.amber, -.3)); }
+    TX("算作一个！", z + 136, GY + 11, { size: 15, color: C.amber, a: P(t, A + 9.1, A + 9.4) });
+    // part 3: trophy vs throne
+    bevel(z + 200, GY - 6, 28, 6, C.stone);
+    R(z + 206, GY - 34, 16, 22, "#b8862e"); R(z + 205, GY - 36, 18, 3, C.gold); R(z + 208, GY - 16, 12, 4, "#c0564a"); R(z + 206, GY - 12, 2, 6, "#8a6420"); R(z + 220, GY - 12, 2, 6, "#8a6420");
+    ln(z + 205, GY - 33, z + 223, GY - 14, "#9aa3b5"); ln(z + 223, GY - 33, z + 205, GY - 14, "#9aa3b5"); lockSpr(z + 214, GY - 20);
+    if (t > A + 13.1 && t < A + 13.6) GLOW(z + 214, GY - 22, 20, "255,90,80", .7);
+    TX("裁决权", z + 214, GY - 44, { size: 14, color: C.gold });
+    if (t > A + 11.2) {
+      const m = mv(t, z + 184, GY, [[A + 11.4, A + 12.4, z + 192, GY], [A + 12.8, A + 13.1, z + 203, GY, 10], [A + 13.1, A + 13.5, z + 192, GY, 6]]);
+      crit(m.x, m.y, { c: C.sage, walk: m.walk, look: 1, eyes: t > A + 13.1 && t < A + 14 ? "x" : t > A + 14.2 ? "happy" : "n", a: P(t, A + 11.2, A + 11.5) });
+      if (t < A + 14.2) { const ty = m.y - 21; R(m.x - 3, ty, 7, 4, C.gold); R(m.x - 1, ty + 4, 3, 2, C.gold); R(m.x - 2, ty + 6, 5, 1, "#b8862e"); R(m.x - 2, ty + 1, 1, 1, "#fff1b8"); }
+      else { const sa = E.back(P(t, A + 14.2, A + 14.5)); pop(m.x, m.y - 24, sa, () => { for (let k = 0; k < 5; k++) { const sx = m.x - 14 + k * 6; R(sx, m.y - 26, 5, 5, "#0e1428"); R(sx, m.y - 26, 5, 1, C.sage); } }); }
+      TX("锁着呢", z + 214, GY - 52, { size: 13, color: C.coral, a: win(t, A + 13.1, A + 15) });
+      TX("背包 +2", m.x, m.y - 36, { size: 14, color: C.sage, a: P(t, A + 14.3, A + 14.6) });
+    }
+  },
+});
+
+/* =================================================================
+   STAGES 7–8
+   ================================================================= */
+/* ---- 7 · swappable foundation ---- */
+const SUB = ["数据库", "签名日志", "账本", "区块链"];
+function cart(x, col, cargo, label) {
+  bevel(x - 8, GY - 9, 16, 6, col); disc(x - 5, GY - 2, 2, "#2a2f3d"); disc(x + 5, GY - 2, 2, "#2a2f3d");
+  if (cargo) { R(x - 6, GY - 15, 12, 6, C.paper); R(x - 5, GY - 13, 6, 1, C.ink); R(x - 5, GY - 11, 8, 1, C.ink); }
+  TX(label, x, GY - 22, { font: "px", size: 9, color: col, shadow: false });
+}
+function substrate(k, x0, lab = true) {
+  const y = 124;
+  if (k === 0) for (let c = 0; c < 3; c++) { const cx = x0 + 15 + c * 30; R(cx - 10, y + 4, 20, 18, "#4f6a8f"); R(cx - 10, y + 10, 20, 1, "#3a5172"); R(cx - 10, y + 16, 20, 1, "#3a5172"); R(cx - 9, y + 2, 18, 3, "#7fa0c8"); R(cx - 7, y + 1, 14, 1, "#9cbce0"); }
+  else if (k === 1) { for (let c = 0; c < 4; c++) bevel(x0 + 6 + c * 3, y + 3 + c * 4, 70 - c * 6, 5, C.paper, "#ffffff", "#b8ad98"); disc(x0 + 78, y + 14, 5, C.coral); R(x0 + 76, y + 12, 3, 3, "#ffb3a6"); }
+  else if (k === 2) { bevel(x0 + 8, y + 2, 74, 20, "#7a4a8a", "#a374b4", "#4a2a58"); R(x0 + 10, y + 19, 70, 2, C.paper); R(x0 + 8, y + 2, 4, 4, C.gold); R(x0 + 78, y + 2, 4, 4, C.gold); R(x0 + 40, y + 8, 10, 6, C.gold); }
+  else { for (let c = 0; c < 3; c++) bevel(x0 + 6 + c * 28, y + 4, 18, 16, "#3f7d6a", "#6fb09a", "#24503f"); for (let c = 0; c < 2; c++) { oval(x0 + 28 + c * 28, y + 12, 3, 2, "#c9c9d6"); oval(x0 + 31 + c * 28, y + 12, 3, 2, "#9aa3b5"); } }
+  if (lab) TX(SUB[k], x0 + 45, y + 12, { size: 16 });
+}
+const swapK = t => t < A + 6.5 ? { from: 0, to: 0, ph: 1 } : (() => { const n = Math.floor((t - A - 6.5) / 1.7), ph = ((t - A - 6.5) % 1.7) / .5; return { from: n % 4, to: (n + 1) % 4, ph: clamp(ph) }; })();
+S.push({
+  name: "换地基", sub: "规则不绑定技术", ref: "docs/05-decisions/ADR-0002-normative-rir-and-v1-rust-profile.md", dur: A + 14.4, mood: "main",
+  fx: [[A + 1.8, "pop"], [A + 2.1, "teleport"], [A + 3.6, "check"], [A + 4, "check"], [A + 4.4, "check"], [A + 4.6, "powerup"], [A + 5.4, "pop"], [A + 5.6, "teleport"], ...[0, 1, 2, 3].map(k => [A + 6.5 + k * 1.7, "swap"])],
+  cues: [
+    { at: A + .3, b: "先翻译成 RIR！", say: "不管用 Rust 还是 C++ 写，程序都要先翻译成统一的 RIR。新语言得先过一致性检查，才能上车。" },
+    { at: A + 6.4, b: "地基随便换！", say: "下面用数据库、签名日志、账本还是区块链来实现都行。地基换了，城堡纹丝不动，结果的含义也不变。" },
+  ],
+  who(t) { const z = Z(7); return { ...mv(t, z + 280, GY, []), dir: -1, point: pt(t, A + 1, A + 3, z + 83, GY - 30) || pt(t, A + 3.4, A + 5, z + 40, GY - 30) || pt(t, A + 6.6, A + 8.6, z + 155, 132), eyes: t > A + 6.6 ? "happy" : "n" }; },
+  draw(t) {
+    const z = Z(7), sw = swapK(t), sliding = t > A + 6.5 && sw.ph < 1, hov = sliding ? -4 : -Math.max(0, 4 - (sw.ph - 1) * 4);
+    R(z - 40, GY - 1, 120, 1, "#7a8396"); for (let x = z - 40; x < z + 80; x += 6) R(x, GY - 1, 2, 2, "#4a5268");
+    // translator
+    bevel(z + 70, GY - 24, 26, 24, C.stone); R(z + 64, GY - 30, 12, 2, "#9aa3b5"); R(z + 66, GY - 28, 8, 2, "#9aa3b5"); R(z + 82, GY - 32, 4, 8, "#7a8396");
+    gearPx(z + 83, GY - 12, WT * 2, C.gold); R(z + 73, GY - 21, 2, 2, Math.sin(WT * 6) > 0 ? C.sage : "#2a3550");
+    TX("翻译成 RIR", z + 83, GY - 40, { size: 13 });
+    // checkpoint
+    R(z + 44, GY - 22, 3, 22, C.stone); R(z + 38, GY - 28, 15, 6, C.ink);
+    for (let k = 0; k < 3; k++) { const on = t > A + 3.6 + k * .4; R(z + 40 + k * 4, GY - 26, 3, 2, on ? C.sage : "#2a3550"); if (on) GLOW(z + 41 + k * 4, GY - 25, 6, "120,230,180", .6); }
+    const open = P(t, A + 4.6, A + 4.9); if (open < 1) R(z + 47, GY - 13, 18 * (1 - open), 2, C.coral); R(z + 47, GY - 13 - 18 * open, 2, 18 * open, C.coral);
+    TX("一致性检查", z + 45, GY - 36, { size: 13 });
+    // carts
+    if (t < A + 1.9) cart(lerp(z - 30, z + 62, E.out(P(t, A + .3, A + 1.6))), "#d0703c", true, "Rust");
+    const cx = t < A + 4.6 ? lerp(z - 30, z + 30, E.out(P(t, A + 2.4, A + 3.4))) : lerp(z + 30, z + 62, E.inOut(P(t, A + 4.6, A + 5.2)));
+    if (t > A + 2.4 && t < A + 5.4) cart(cx, "#5c8dd6", true, "C++");
+    // crystals flying to the spire
+    for (const t0 of [A + 2.1, A + 5.6]) { const u = P(t, t0, t0 + .7); if (u > 0 && u < 1) { const q = arc({ x: z + 84, y: GY - 34 }, { x: z + 155, y: 66 + hov }, 30, E.inOut(u)); R(q.x - 1, q.y - 2, 3, 5, C.ice); R(q.x - 2, q.y - 1, 5, 3, C.ice); GLOW(q.x, q.y, 10, "190,230,255", .7); } }
+    // foundation
+    L.save(); L.beginPath(); L.rect(z + 110, 124, 90, 24); L.clip();
+    if (sliding) { substrate(sw.from, z + 110 - 92 * E.inOut(sw.ph), false); substrate(sw.to, z + 110 + 92 * (1 - E.inOut(sw.ph)), false); }
+    else substrate(sw.to, z + 110);
+    L.restore();
+    // castle
+    if (hov < 0) for (const fx of [z + 116, z + 194]) { R(fx, 125 + hov, 2, 2 + (Math.floor(WT * 20) % 2), C.amber); R(fx, 127 + hov, 2, 1, C.gold); }
+    bevel(z + 110, 118 + hov, 90, 6, "#3d4a6a", "#5a6b94", "#26304a");
+    bevel(z + 130, 86 + hov, 50, 32, "#5b7fae", "#86a9d6", "#3a5578");
+    for (let k = 0; k < 50; k += 7) R(z + 130 + k, 82 + hov, 4, 4, "#5b7fae");
+    R(z + 151, 106 + hov, 8, 12, "#1a2440"); R(z + 136, 92 + hov, 3, 4, C.ice); R(z + 171, 92 + hov, 3, 4, C.ice);
+    const gy = 64 + hov + Math.sin(WT * 2) * 2; [1, 3, 5, 7, 5, 3, 1].forEach((w, k) => R(z + 155 - (w >> 1), gy + k * 2, w, 2, k < 3 ? "#e6f6ff" : C.frost));
+    GLOW(z + 155, gy + 7, 30, "170,220,255", .55 + .2 * Math.sin(WT * 3));
+    TX("RIR", z + 155, 98 + hov, { font: "px", size: 13 });
+    if (t > A + 6.6) { const pl = 1 - clamp(sw.ph); TX("✓ 结果不变", z + 205, 96, { size: 15, color: C.sage, align: "left", sc: 1 + .15 * pl }); }
+  },
+});
+
+/* ---- 8 · treasure, recap, curtain ---- */
+const ZNAMES = ["ACLt", "开放的算力集市", "剃刀与桥", "冰封的约定", "拆分 · 派发 · 执行", "抽签验证", "看不见的线", "换地基"];
+const LINE8 = [[120, C.sage, 0], [145, "#7fd6d0", 2], [170, C.gold, 3], [195, "#a3c4f3", 4], [222, "#e6a0c4", 1]];
+const RIDE0 = A + 5, RIDE1 = A + 11.5;
+const cam8 = t => t < RIDE0 ? Z(8) : lerp(Z(8), Z(0), E.inOut(P(t, RIDE0, RIDE1)));
+S.push({
+  name: "宝箱与谢幕", sub: "只付一次 · 回顾 · 下次见", ref: "docs/07-roadmap/current-status.md", dur: A + 17.4, mood: t => t < RIDE0 ? "main" : "finale", cam: cam8,
+  fx: [[A + .8, "chest"], ...[0, 1, 2, 3].map(k => [A + 1.75 + k * .3, "coin"]), [A + 3, "hmm"], [A + 3.4, "stamp"], [A + 4.8, "jump"], [RIDE0, "zoom"], [RIDE0 + 2.5, "zoom"], [RIDE1 + .4, "land"], ...[0, 1, 2, 3, 4, 5].map(k => [RIDE1 + .5 + k * .7, "firework"]), [RIDE1 + 4.3, "finale"]],
+  cues: [
+    { at: A + .2, b: "验证通过，开宝箱！", say: "验证通过，才打开宝箱结算。每份报酬只发一次，睡着的那位就没有啦。" },
+    { at: RIDE0 + .2, b: "回头看看这一路～", say: "回头看看这一路：开放的集市，只剩两种角色，先约定再干活，抽签验证，风险有边界，地基随便换。" },
+    { at: RIDE1 + .7, b: "谢谢收看！", say: "ACLt 还在早期的规格化阶段，一边证明一边修订。谢谢收看，下次见！" },
+  ],
+  who(t) {
+    const z = Z(8);
+    if (t < RIDE0 - .3) return { ...mv(t, z + 275, GY, []), dir: -1, point: pt(t, A + .4, A + 2.4, z + 80, GY - 20), eyes: t > A + 1.5 ? "happy" : "n" };
+    if (t < RIDE1) { const up = E.out(P(t, RIDE0 - .3, RIDE0 + .3)), c = cam8(t); return { x: c + 250, y: lerp(GY, 96 + Math.sin(WT * 3) * 3, up), dir: -1, air: true, jet: true, eyes: "happy", since: 9 }; }
+    const m = mv(t, Z(0) + 250, 96, [[RIDE1, RIDE1 + .4, Z(0) + 262, GY]]);
+    return { ...m, dir: -1, wave: t > RIDE1 + .9, eyes: "happy" };
+  },
+  draw(t) {
+    const z = Z(8);
+    // chest
+    const open = t > A + .8; bevel(z + 60, GY - 10, 20, 10, C.wood, "#b07a54", C.wood2); R(z + 60, GY - 6, 20, 1, C.gold); R(z + 69, GY - 8, 2, 3, C.gold);
+    if (!open) { bevel(z + 60, GY - 15, 20, 5, "#9a6644", "#b07a54", C.wood2); R(z + 60, GY - 12, 20, 1, C.gold); }
+    else { bevel(z + 60, GY - 22, 20, 5, "#9a6644", "#b07a54", C.wood2); R(z + 61, GY - 11, 18, 1, "#ffe9a8"); GLOW(z + 70, GY - 12, 26, "255,210,110", .6); for (let k = 0; k < 4; k++) { const u = (WT * .8 + k / 4) % 1; alpha(1 - u, () => sparkle(z + 63 + k * 5, GY - 14 - u * 14, C.gold)); } }
+    TX("验证通过", z + 70, GY - 30, { size: 14, color: C.sage, a: P(t, A + .2, A + .5) });
+    LINE8.forEach(([x, c, k], i) => {
+      const paid = i < 4, arrive = A + 1.3 + i * .3 + .45, hop = paid && t > arrive && t < arrive + .25 ? 3 : 0;
+      crit(z + x, GY, { c, hop, look: -1, eyes: paid ? (t > arrive ? "happy" : "n") : "sleep" });
+      if (paid && t > A + 1.3 + i * .3) { const u = P(t, A + 1.3 + i * .3, arrive); if (u < 1) { const q = arc({ x: z + 70, y: GY - 16 }, { x: z + x, y: GY - 22 }, 26, E.inOut(u)); coinPx(q.x, q.y, i); } else coinPx(z + x, GY - 22 + Math.sin(WT * 3 + i), i); }
+      if (!paid && t > A + 2.8) pbub(z + x, GY - 22, "dots", 1);
+    });
+    TX("每份报酬只发一次", z + 160, 70, { size: 26, color: C.amber, a: P(t, A + 3.4, A + 3.6), sc: lerp(1.8, 1, E.out(P(t, A + 3.4, A + 3.7))), rot: -.06 });
+    // recap labels during the ride
+    if (t > RIDE0 && t < RIDE1 + .2) { const c = cam8(t), j = Math.round(c / ZW); if (j >= 1 && j <= 7) { const a = clamp(1 - Math.abs(c - Z(j)) / 150) * win(t, RIDE0, RIDE1 + .2); TX(ZNAMES[j], 160, 30, { ss: true, size: 40, a, color: C.paper }); } }
+    // curtain call at zone 0
+    if (t > RIDE1) {
+      const cs = [[60, 22], [250, 18], [130, 14], [200, 28], [40, 34], [280, 30]];
+      cs.forEach(([x, y], k) => firework(x, y, RIDE1 + .5 + k * .7 - .4, t, 70 + k, [[C.gold, C.coral, C.paper], [C.sage, C.frost, C.paper], [C.violet, "#e6a0c4", C.paper]][k % 3]));
+      const ca = E.out(P(t, RIDE1 + .8, RIDE1 + 1.6));
+      R(20, lerp(GY, 32, ca), 4, GY - lerp(GY, 32, ca), "#c99a3a");
+      if (ca >= 1) { for (let y = 34; y < GY; y += 4) R(21, y, 2, 1, "#8a6420"); R(14, 30, 74, 3, "#c99a3a"); R(14, 30, 8, 5, "#5b6478"); const sw = Math.sin(WT * 1.5) * 2; ln(80, 33, 80 + sw, 56, "#c9c9d6"); bevel(76 + sw, 56, 8, 6, LETCOL[(Math.floor(WT / 2)) % 4]); }
+      const sa = E.back(P(t, RIDE1 + 1.2, RIDE1 + 1.6));
+      pop(52, GY - 14, sa, () => { R(36, GY - 8, 2, 8, C.wood2); R(66, GY - 8, 2, 8, C.wood2); bevel(30, GY - 22, 44, 14, "#2b3550", "#4a5a86", "#141b33"); for (let x = 30; x < 74; x += 6) { R(x, GY - 22, 3, 2, C.amber); R(x + 3, GY - 10, 3, 2, C.amber); } });
+      TX("G0 · 施工中", 52, GY - 15, { size: 13, color: C.gold, a: P(t, RIDE1 + 1.5, RIDE1 + 1.8) });
+      TX("ACLt Protocol · 一边证明，一边修订", 160, 166, { ss: true, size: 15, color: C.mute, a: P(t, RIDE1 + 2.5, RIDE1 + 3), shadow: false });
+    }
+  },
+});
+
+/* =================================================================
+   AUDIO — chiptune music + effects, synthesized live (Web Audio)
+   ================================================================= */
+const SND = (() => {
+  let ac = null, master, mus, sfx, noise, P25, running = false, nextT = 0, step = 0, mood = "intro";
+  const on = { music: true, sfx: true }, LV = { music: .5, sfx: .62 };
+  const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
+  function init() {
+    if (ac) { if (ac.state === "suspended") ac.resume(); return; }
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+    ac = new AC();
+    master = ac.createGain(); master.gain.value = .8; master.connect(ac.destination);
+    const dl = ac.createDelay(); dl.delayTime.value = .19; const fb = ac.createGain(); fb.gain.value = .22; const wet = ac.createGain(); wet.gain.value = .16;
+    dl.connect(fb); fb.connect(dl); dl.connect(wet); wet.connect(master);
+    mus = ac.createGain(); mus.gain.value = on.music ? LV.music : 0; mus.connect(master); mus.connect(dl);
+    sfx = ac.createGain(); sfx.gain.value = on.sfx ? LV.sfx : 0; sfx.connect(master); sfx.connect(dl);
+    noise = ac.createBuffer(1, ac.sampleRate, ac.sampleRate); const nd = noise.getChannelData(0); for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+    const n = 32, re = new Float32Array(n), im = new Float32Array(n); for (let k = 1; k < n; k++) re[k] = 2 / (k * Math.PI) * Math.sin(k * Math.PI * .25);
+    P25 = ac.createPeriodicWave(re, im);
+    setInterval(sched, 25);
+  }
+  function tone(dest, wave, f, t, dur, vol, slide) {
+    const o = ac.createOscillator(), g = ac.createGain();
+    if (wave === "p25") o.setPeriodicWave(P25); else o.type = wave;
+    o.frequency.setValueAtTime(f, t); if (slide) o.frequency.exponentialRampToValueAtTime(slide, t + dur);
+    g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(vol, t + .005); g.gain.setValueAtTime(vol, t + dur * .55); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.connect(g); g.connect(dest); o.start(t); o.stop(t + dur + .02);
+  }
+  function nz(dest, t, dur, type, f, vol, f2) {
+    const s = ac.createBufferSource(); s.buffer = noise; const bq = ac.createBiquadFilter(); bq.type = type;
+    bq.frequency.setValueAtTime(f, t); if (f2) bq.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    const g = ac.createGain(); g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    s.connect(bq); bq.connect(g); g.connect(dest); s.start(t); s.stop(t + dur + .02);
+  }
+  /* music: 120 BPM, C – Am – F – G, 8-bar pulse-wave melody */
+  const SIX = 60 / 120 / 4;
+  const MEL = [72, 0, 76, 79, 84, -1, 79, 76, 81, -1, 79, 76, 72, -1, 74, 76, 77, -1, 76, 74, 72, 74, 76, 77, 79, -1, -1, 74, 71, -1, 74, -1,
+    72, 0, 76, 79, 84, -1, 86, 84, 81, -1, 79, 81, 84, -1, 81, 79, 77, 79, 81, 77, 76, 74, 72, 74, 76, -1, 74, -1, 72, -1, -1, 0];
+  const ROOTS = [48, 45, 41, 43], CH = { 48: [60, 64, 67], 45: [57, 60, 64], 41: [53, 57, 60], 43: [55, 59, 62] };
+  const TROOTS = [45, 41, 38, 40], TCH = { 45: [57, 60, 64], 41: [53, 57, 60], 38: [50, 53, 57], 40: [52, 56, 59] };
+  const kick = t => tone(mus, "sine", 150, t, .16, .55, 40);
+  const snare = t => { nz(mus, t, .12, "bandpass", 1800, .3); tone(mus, "triangle", 220, t, .06, .12, 120); };
+  const hat = (t, v) => nz(mus, t, .035, "highpass", 7000, v);
+  function sched() {
+    if (!ac || !running) return;
+    if (nextT < ac.currentTime) nextT = ac.currentTime + .05;
+    while (nextT < ac.currentTime + .15) { try { note(step, nextT); } catch (e) { } nextT += SIX; step++; }
+  }
+  function note(s, t) {
+    const i = s % 16, bar = Math.floor(s / 16), e8 = i % 2 === 0 ? i / 2 : -1;
+    if (mood === "tense") {
+      const root = TROOTS[bar % 4], ch = TCH[root];
+      if (i % 2 === 0) tone(mus, "triangle", mtof(root - 12 + (i % 4 ? 12 : 0)), t, .2, .24);
+      tone(mus, "p25", mtof(ch[i % 3] + 12), t, .09, .03);
+      if (i % 8 === 0) kick(t); if (i % 4 === 2) hat(t, .05);
+      return;
+    }
+    const root = ROOTS[bar % 4], ch = CH[root];
+    if (e8 >= 0) tone(mus, "triangle", mtof(root - 12 + [0, 12, 0, 12, 0, 12, 7, 12][e8]), t, .2, .26);
+    if (e8 >= 0) {
+      const idx = (bar % 8) * 8 + e8, m = MEL[idx];
+      if (m > 0) { let len = .22, k = 1; while (MEL[(idx + k) % 64] === -1 && k < 4) { len += .25; k++; } tone(mus, "p25", mtof(m), t, len, mood === "intro" ? .06 : .075); if (mood === "finale") tone(mus, "square", mtof(m + 12), t, len * .8, .022); }
+    }
+    if (mood !== "intro") { tone(mus, "square", mtof(ch[i % 3] + 24), t, .05, .016); if (i === 0 || i === 8 || i === 10) kick(t); if (i === 4 || i === 12) snare(t); if (i % 2 === 1) hat(t, .03); }
+    else if (i % 4 === 2) hat(t, .02);
+  }
+  const p = "p25";
+  const FX = {
+    thunk: t => { tone(sfx, "square", 150 + Math.random() * 60, t, .08, .1, 70); nz(sfx, t, .05, "lowpass", 1200, .18); },
+    fall: t => tone(sfx, p, 900, t, .4, .07, 260),
+    land: t => { nz(sfx, t, .1, "lowpass", 800, .3); tone(sfx, "square", 110, t, .07, .09, 70); },
+    jump: t => tone(sfx, p, 280, t, .16, .12, 780),
+    pop: t => tone(sfx, "square", 600, t, .06, .1, 1200),
+    pops: t => { for (let k = 0; k < 6; k++) tone(sfx, "square", 500 + k * 110, t + k * .08, .05, .08, 1100 + k * 120); },
+    chat: t => { for (let k = 0; k < 3; k++) tone(sfx, p, 620 + Math.random() * 520, t + k * .075, .055, .065); },
+    hmm: t => { tone(sfx, "triangle", 392, t, .22, .14, 370); tone(sfx, "triangle", 330, t + .25, .35, .14, 300); },
+    powerup: t => [60, 64, 67, 72, 76, 79, 84].forEach((m, k) => tone(sfx, p, mtof(m), t + k * .045, .07, .08)),
+    toll: t => { tone(sfx, "square", 660, t, .05, .06); tone(sfx, "square", 523, t + .06, .1, .06); },
+    slash: t => { nz(sfx, t, .3, "bandpass", 6000, .4, 800); tone(sfx, "square", 1400, t, .25, .06, 200); },
+    crumble: t => { nz(sfx, t, .9, "lowpass", 500, .45); for (let k = 0; k < 5; k++) tone(sfx, "square", 90 + Math.random() * 60, t + k * .12, .08, .07); },
+    build: t => [0, 4, 7, 12, 7, 12, 16, 19, 24].forEach((d, k) => tone(sfx, p, mtof(60 + d), t + k * .08, .07, .07)),
+    chime: t => [72, 76, 79, 84].forEach((m, k) => tone(sfx, "triangle", mtof(m), t + k * .07, .4, .14)),
+    whoosh: t => nz(sfx, t, .45, "bandpass", 400, .3, 3000),
+    freeze: t => { [84, 88, 91, 96, 100].forEach((m, k) => tone(sfx, "triangle", mtof(m), t + k * .06, .35, .12)); nz(sfx, t, .8, "highpass", 6000, .08); },
+    lock: t => { tone(sfx, "square", 1800, t, .03, .08); tone(sfx, "square", 1200, t + .05, .05, .08); },
+    clang: t => { tone(sfx, "square", 2200, t, .14, .08, 1700); tone(sfx, "square", 2950, t, .1, .05); nz(sfx, t, .1, "highpass", 3000, .25); },
+    dizzy: t => { for (let k = 0; k < 6; k++) tone(sfx, "triangle", 900 + (k % 2) * 220, t + k * .08, .07, .07); },
+    crack: t => { nz(sfx, t, .15, "highpass", 2000, .35); tone(sfx, "square", 300, t, .08, .08, 120); },
+    split: t => { nz(sfx, t, .25, "bandpass", 1500, .35); [72, 76, 79, 84].forEach((m, k) => tone(sfx, p, mtof(m), t + .1 + k * .05, .06, .08)); },
+    catch: t => tone(sfx, p, 880, t, .07, .08, 1320),
+    teleport: t => { tone(sfx, p, 300, t, .35, .08, 1800); tone(sfx, p, 310, t + .05, .35, .05, 1820); },
+    zzz: t => { tone(sfx, "triangle", 180, t, .5, .14, 140); tone(sfx, "triangle", 160, t + .6, .5, .12, 120); },
+    alarm: t => [0, .15, .3].forEach(d => tone(sfx, "square", 1040, t + d, .08, .06)),
+    boing: t => { tone(sfx, p, 200, t, .1, .1, 600); tone(sfx, p, 600, t + .1, .25, .1, 150); },
+    bonk: t => { tone(sfx, "square", 330, t, .06, .1, 160); nz(sfx, t, .06, "lowpass", 900, .25); },
+    ding: t => tone(sfx, "triangle", 1568, t, .35, .13),
+    spin: t => { for (let k = 0; k < 9; k++) tone(sfx, "square", 1200, t + k * .045 * (1 + k * .1), .015, .04); },
+    check: t => { tone(sfx, p, 1047, t, .06, .08); tone(sfx, p, 1568, t + .07, .12, .08); },
+    cross: t => tone(sfx, "square", 170, t, .18, .08, 110),
+    fanfare: t => { [[72, 0], [76, .1], [79, .2], [84, .32]].forEach(([m, d]) => tone(sfx, p, mtof(m), t + d, d > .3 ? .6 : .09, .11)); tone(sfx, "triangle", mtof(48), t + .32, .6, .2); },
+    shrug: t => { tone(sfx, "triangle", 523, t, .22, .13, 494); tone(sfx, "triangle", 440, t + .26, .45, .13, 392); },
+    reveal: t => { for (let k = 0; k < 12; k++) tone(sfx, "triangle", 300 + Math.sin(k) * 90, t + k * .06, .07, .06); nz(sfx, t, .8, "bandpass", 2000, .12, 600); },
+    denied: t => { tone(sfx, "square", 220, t, .12, .09); tone(sfx, "square", 165, t + .15, .25, .09); },
+    swap: t => { nz(sfx, t, .35, "bandpass", 500, .25, 2500); tone(sfx, "square", 120, t + .35, .06, .1); },
+    chest: t => [67, 72, 76, 79, 84, 88].forEach((m, k) => tone(sfx, p, mtof(m), t + k * .06, .1, .08)),
+    coin: t => { tone(sfx, "square", 988, t, .07, .08); tone(sfx, "square", 1319, t + .07, .25, .08); },
+    stamp: t => { tone(sfx, "square", 90, t, .12, .15, 50); nz(sfx, t, .12, "lowpass", 700, .4); },
+    firework: t => { tone(sfx, "triangle", 400, t, .35, .06, 1400); nz(sfx, t + .38, .5, "highpass", 1500, .3); for (let k = 0; k < 6; k++) nz(sfx, t + .45 + k * .06, .03, "highpass", 5000, .12); },
+    zoom: t => nz(sfx, t, 1.2, "bandpass", 300, .2, 1800),
+    finale: t => { [72, 76, 79, 84, 79, 84, 88].forEach((m, k) => tone(sfx, p, mtof(m), t + k * .11, k === 6 ? .8 : .1, .1)); [48, 55, 60].forEach(m => tone(sfx, "triangle", mtof(m), t + .66, .9, .14)); },
+  };
+  return {
+    init() { try { init(); } catch (e) { ac = null; } },
+    run(v) { running = v && !!ac; },
+    setMood(m) { mood = m; },
+    play(name) { try { if (!ac || !on.sfx || ac.state !== "running" || !FX[name]) return; FX[name](ac.currentTime + .01); } catch (e) { } },
+    toggle(kind) { on[kind] = !on[kind]; if (ac) (kind === "music" ? mus : sfx).gain.setTargetAtTime(on[kind] ? LV[kind] : 0, ac.currentTime, .05); return on[kind]; },
+  };
+})();
+
+/* =================================================================
+   ENGINE
+   ================================================================= */
+const starts = []; let TOTAL = 0; S.forEach(s => { starts.push(TOTAL); TOTAL += s.dur; });
+const EVENTS = []; S.forEach((s, i) => { (s.fx || []).forEach(([t, n]) => EVENTS.push([starts[i] + t, n])); s.cues.forEach(c => EVENTS.push([starts[i] + c.at, "chat"])); });
+const POSTER = 5.6;
+let GT = POSTER, playing = false, started = false, speed = 1, last = performance.now(), scale = 1, jumped = false;
+const locate = g => { let i = S.length - 1; for (let k = 0; k < S.length; k++) if (g < starts[k] + S[k].dur) { i = k; break; } return { i, t: clamp(g - starts[i], 0, S[i].dur) }; };
+const cueAt = (sc, t) => { let c = null, nx = sc.dur; sc.cues.forEach((q, k) => { if (q.at <= t) { c = q; nx = k + 1 < sc.cues.length ? sc.cues[k + 1].at : sc.dur; } }); return c ? { ...c, end: nx } : null; };
+const camOf = j => S[j].cam || (() => Z(j));
+function camAt(i, t) { if (i > 0 && t < TR) return lerp(camOf(i - 1)(S[i - 1].dur), camOf(i)(TR), E.inOut(t / TR)); return camOf(i)(t); }
+function poseAt(i, t) {
+  let p;
+  if (i > 0 && t < TR) { const a = S[i - 1].who(S[i - 1].dur), b = S[i].who(TR), m = t / TR, e = E.inOut(m); p = { x: lerp(a.x, b.x, e), y: lerp(a.y, b.y, e) - Math.abs(Math.sin(m * Math.PI * 3)) * 7, dir: b.x >= a.x ? 1 : -1, walk: true, since: 9, eyes: "happy" }; }
+  else p = { ...S[i].who(t) };
+  p.squash = p.air ? -.6 : (p.since !== undefined && p.since < .2 ? 1 - p.since / .2 : 0);
+  return p;
+}
+function shakeAt(sc, t) { let a = 0; (sc.shakes || []).forEach(([t0, d, amp]) => { if (t > t0 && t < t0 + d) a = Math.max(a, amp * (1 - (t - t0) / d)); }); return { x: Math.round(Math.sin(WT * 71) * a), y: Math.round(Math.cos(WT * 53) * a) }; }
+function flashAt(sc, t) { let a = 0; (sc.flashes || []).forEach(([t0, d]) => { if (t > t0 && t < t0 + d) a = Math.max(a, 1 - (t - t0) / d); }); return a; }
+
+function resize() {
+  const r = cv.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = Math.max(1, Math.round(r.width * dpr)); cv.height = Math.max(1, Math.round(r.height * dpr)); scale = cv.width / W;
+}
+new ResizeObserver(resize).observe(cv); resize();
+const scan = (() => { const c = document.createElement("canvas"); c.width = 1; c.height = 4; const g = c.getContext("2d"); g.fillStyle = "rgba(0,0,0,.5)"; g.fillRect(0, 3, 1, 1); return ctx.createPattern(c, "repeat"); })();
+
+function drawText(q, cam, sh) {
+  const o = q.o, a = o.a ?? 1; if (a <= 0) return;
+  const X = o.ss ? q.x * K : (q.x - cam + sh.x) * K, Y = (q.y + sh.y) * K;
+  ctx.save(); ctx.globalAlpha = Math.min(1, a);
+  ctx.font = `${o.size || 16}px ${FONTS[o.font || "fun"]}`; ctx.textAlign = o.align || "center"; ctx.textBaseline = "middle";
+  if (o.sc || o.rot) { ctx.translate(X, Y); if (o.rot) ctx.rotate(o.rot); if (o.sc) ctx.scale(o.sc, o.sc); ctx.translate(-X, -Y); }
+  if (o.shadow !== false) { ctx.fillStyle = "rgba(6,8,18,.9)"; ctx.fillText(q.s, X + 3, Y + 3); }
+  ctx.fillStyle = o.color || C.paper; ctx.fillText(q.s, X, Y); ctx.restore();
+}
+function drawBubble(X, Y, text, n, a) {
+  if (a <= 0 || !text) return;
+  ctx.save(); ctx.font = `23px ${FONTS.fun}`; ctx.textBaseline = "middle";
+  const tw = ctx.measureText(text).width, bw = Math.min(tw, 360) + 32, bh = 52, bx = clamp(X - bw / 2, 20, W - 20 - bw), by = Y - bh - 26;
+  const s = lerp(.6, 1, E.back(clamp(a))), tx = clamp(X, bx + 24, bx + bw - 24);
+  ctx.translate(tx, by + bh + 20); ctx.scale(s, s); ctx.translate(-tx, -(by + bh + 20)); ctx.globalAlpha = clamp(a * 1.6);
+  ctx.fillStyle = "rgba(0,0,0,.35)"; ctx.fillRect(bx + 4, by + 8, bw, bh);
+  ctx.fillStyle = C.ink; ctx.fillRect(bx - 4, by, bw + 8, bh); ctx.fillRect(bx, by - 4, bw, bh + 8);
+  ctx.fillStyle = C.paper; ctx.fillRect(bx, by, bw, bh);
+  ctx.fillStyle = C.ink; ctx.fillRect(tx - 8, by + bh, 16, 4); ctx.fillRect(tx - 4, by + bh + 4, 12, 8); ctx.fillRect(tx, by + bh + 12, 8, 8);
+  ctx.fillStyle = C.paper; ctx.fillRect(tx - 4, by + bh, 8, 4); ctx.fillRect(tx, by + bh + 4, 4, 8);
+  ctx.fillStyle = C.ink; ctx.fillText([...text].slice(0, Math.max(0, Math.floor(n))).join(""), bx + 16, by + bh / 2 + 1);
+  ctx.restore();
+}
+
+const $ = id => document.getElementById(id);
+const lineEl = $("line"), refEl = $("ref"), timeEl = $("time"), scrub = $("scrub"), playBtn = $("play");
+let startBtn = $("start");
+scrub.max = TOTAL.toFixed(2);
+const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+let lastLine = null, lastAct = -1;
+const acts = $("acts");
+S.forEach((s, i) => { const li = document.createElement("li"), b = document.createElement("button"); b.type = "button"; b.innerHTML = `<span class="n">${i === 0 ? "GO" : "0" + i}</span><span class="t"></span><span class="r"></span>`; b.querySelector(".t").textContent = s.name; b.querySelector(".r").textContent = s.sub; b.addEventListener("click", () => { seek(starts[i] + .001); setPlaying(true); }); li.appendChild(b); acts.appendChild(li); });
+const actBtns = [...acts.querySelectorAll("button")];
+function seek(g) { GT = clamp(g, 0, TOTAL - .001); jumped = true; started = true; dropStart(); }
+function dropStart() { if (startBtn) { startBtn.hidden = true; startBtn.remove(); startBtn = null; } }
+
+function render() {
+  const { i, t } = locate(GT), sc = S[i];
+  const cam = Math.round(camAt(i, t)), sh = shakeAt(sc, t);
+  TQ.length = 0; GQ.length = 0;
+  L.setTransform(1, 0, 0, 1, 0, 0); L.globalAlpha = 1; bg(cam);
+  L.setTransform(1, 0, 0, 1, -cam + sh.x, sh.y); ground(cam);
+  for (let j = 0; j <= i; j++) { const vis = Z(j) + ZW > cam - 20 && Z(j) < cam + LW + 20; if (vis || j === i) { try { S[j].draw(j === i ? t : S[j].dur); } catch (e) { console.error(e); } L.globalAlpha = 1; } }
+  const pose = poseAt(i, t), cue = started ? cueAt(sc, t) : null;
+  const talkLen = cue ? Math.min(cue.say.length / 9, 4.5) : 0;
+  pose.talk = cue && playing ? clamp(1 - P(t, cue.at + talkLen, cue.at + talkLen + .3)) * P(t, cue.at, cue.at + .1) : 0;
+  const head = clawd(pose);
+  L.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.setTransform(scale, 0, 0, scale, 0, 0); ctx.imageSmoothingEnabled = false; ctx.drawImage(lo, 0, 0, W, H);
+  ctx.globalCompositeOperation = "lighter";
+  for (const g of GQ) { const X = (g.x - cam + sh.x) * K, Y = (g.y + sh.y) * K, r = g.r * K; const gr = ctx.createRadialGradient(X, Y, 0, X, Y, r); gr.addColorStop(0, `rgba(${g.rgb},${g.a})`); gr.addColorStop(1, `rgba(${g.rgb},0)`); ctx.fillStyle = gr; ctx.fillRect(X - r, Y - r, 2 * r, 2 * r); }
+  ctx.globalCompositeOperation = "source-over";
+  for (const q of TQ) drawText(q, cam, sh);
+  // stage card
+  if (i > 0 && started) { const a = win(t, TR - .2, TR + 3, .35), dx = (1 - E.out(P(t, TR - .2, TR + .2))) * -300; if (a > 0) { ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = C.ink; ctx.fillRect(28 + dx, 28, 330, 76); ctx.fillStyle = C.clawd || "#E8774A"; ctx.fillRect(28 + dx, 28, 8, 76); ctx.font = `12px ${FONTS.px}`; ctx.fillStyle = C.amber; ctx.textBaseline = "middle"; ctx.fillText(`STAGE ${i}`, 52 + dx, 50); ctx.font = `28px ${FONTS.fun}`; ctx.fillStyle = C.paper; ctx.fillText(sc.name, 52 + dx, 80); ctx.restore(); } }
+  if (cue) { const a = P(t, cue.at, cue.at + .25) * (1 - P(t, cue.end - .25, cue.end)); drawBubble((pose.x - cam + sh.x) * K, (head.top + sh.y) * K, cue.b, (t - cue.at) * 16, a); }
+  const fl = flashAt(sc, t); if (fl > 0) { ctx.fillStyle = `rgba(255,255,255,${fl * .8})`; ctx.fillRect(0, 0, W, H); }
+  ctx.globalAlpha = .22; ctx.fillStyle = scan; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
+  const vg = ctx.createRadialGradient(W / 2, H / 2, H * .45, W / 2, H / 2, H); vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,.45)"); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+  // avatar
+  const ad = Math.round(av.clientWidth * Math.min(window.devicePixelRatio || 1, 2)) || 64; if (av.width !== ad) { av.width = ad; av.height = ad; }
+  L.setTransform(1, 0, 0, 1, 0, 0); L.clearRect(0, 0, 40, 40); GQ.length = 0;
+  L.save(); L.beginPath(); L.rect(0, 0, 40, 40); L.clip(); L.fillStyle = "#161e36"; L.fillRect(0, 0, 40, 40); clawd({ x: 20, y: 32, talk: pose.talk, eyes: pose.eyes, wave: pose.wave, since: 9 }); L.restore();
+  actx.imageSmoothingEnabled = false; actx.clearRect(0, 0, av.width, av.height); actx.drawImage(lo, 0, 0, 40, 40, 0, 0, av.width, av.height);
+  // captions
+  const text = !started ? "点“开始冒险”，我们就出发！" : cue ? (playing ? [...cue.say].slice(0, Math.floor((t - cue.at) * 24) + 1).join("") : cue.say) : "";
+  if (text !== lastLine) { lineEl.textContent = text; lastLine = text; }
+  if (i !== lastAct) { refEl.textContent = `${i === 0 ? "开场" : "STAGE " + i} · ${sc.name} · 相关文档：${sc.ref}`; actBtns.forEach((b, k) => b.setAttribute("aria-current", k === i ? "true" : "false")); lastAct = i; }
+  timeEl.textContent = `${fmt(started ? GT : 0)} / ${fmt(TOTAL)}`;
+  if (document.activeElement !== scrub) scrub.value = (started ? GT : 0).toFixed(2);
+  const md = typeof sc.mood === "function" ? sc.mood(t) : sc.mood; SND.setMood(md || "main");
+}
+function setPlaying(v) {
+  if (v) { if (!started) { started = true; GT = 0; jumped = true; } if (GT >= TOTAL - .01) { GT = 0; jumped = true; } dropStart(); SND.init(); }
+  playing = v; SND.run(v);
+  playBtn.textContent = v ? "❚❚" : (GT >= TOTAL - .01 ? "↺" : "▶"); playBtn.setAttribute("aria-label", v ? "暂停" : "播放");
+}
+function frame(now) {
+  const dt = Math.min(.1, (now - last) / 1000); last = now;
+  WT += reduce ? dt * .4 : dt;
+  if (playing) {
+    const prev = GT; GT += dt * speed;
+    if (!jumped) for (const [at, n] of EVENTS) if (at > prev && at <= GT) SND.play(n);
+    jumped = false;
+    if (GT >= TOTAL) { GT = TOTAL - .0001; setPlaying(false); playBtn.textContent = "↺"; }
+  }
+  try { render(); } catch (e) { console.error(e); }
+  requestAnimationFrame(frame);
+}
+playBtn.addEventListener("click", () => setPlaying(!playing));
+startBtn.addEventListener("click", () => setPlaying(true));
+cv.addEventListener("click", () => setPlaying(!playing));
+$("prev").addEventListener("click", () => { const { i, t } = locate(GT); seek(starts[t > 2 || i === 0 ? i : i - 1] + .001); });
+$("next").addEventListener("click", () => { const { i } = locate(GT); if (i < S.length - 1) seek(starts[i + 1] + .001); });
+$("speed").addEventListener("click", e => { speed = speed === 1 ? 1.5 : speed === 1.5 ? .75 : 1; e.currentTarget.textContent = speed + "×"; });
+["music", "sfx"].forEach(k => $(k).addEventListener("click", e => { SND.init(); e.currentTarget.setAttribute("aria-pressed", String(SND.toggle(k))); }));
+scrub.addEventListener("input", () => seek(parseFloat(scrub.value)));
+addEventListener("keydown", e => {
+  if (e.target instanceof HTMLInputElement && e.key !== " ") return;
+  if (e.key === " ") { e.preventDefault(); setPlaying(!playing); }
+  else if (e.key === "ArrowRight") $("next").click();
+  else if (e.key === "ArrowLeft") $("prev").click();
+});
+
+/* fonts: request exactly the glyphs the canvas uses */
+let fontChars = "";
+function loadFonts() {
+  const all = [...used].join(""); if (all === fontChars || !document.fonts) return; fontChars = all;
+  Promise.all([`20px "ZCOOL KuaiLe"`, `12px "Press Start 2P"`, `20px "Noto Sans SC"`].map(f => document.fonts.load(f, all).catch(() => null)));
+}
+setInterval(loadFonts, 1200);
+(() => { S.forEach(s => { for (let t = 0; t <= s.dur; t += .5) { try { s.draw(t); } catch (e) { console.error(e); } } s.cues.forEach(c => { for (const ch of c.b + c.say) used.add(ch); }); }); for (const ch of "STAGE0123456789点开始冒险我们就出发") used.add(ch); TQ.length = 0; GQ.length = 0; loadFonts(); })();
+
+setPlaying(false);
+requestAnimationFrame(t => { last = t; frame(t); });
+
+})();
+</script>
+</body>
+</html>
