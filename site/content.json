@@ -1,0 +1,372 @@
+{
+  "site": {
+    "url": "https://zeromatrix.tenneidp.com/",
+    "brand": "ZeroMatrixTech",
+    "company": { "zh": "北京凌矩阵科技有限责任公司", "en": "北京凌矩阵科技有限责任公司" },
+    "tagline": { "zh": "从设备到系统，让技术服务于实际需求。", "en": "Technology for practical needs, from devices to systems." },
+    "email": "inpax@tenneidp.com",
+    "address": {
+      "zh": "北京市朝阳区北京像素南区 7 号楼 0215",
+      "en": "Room 0215, Building 7, South Area of Beijing Pixel, Chaoyang District, Beijing, China"
+    },
+    "github": "https://github.com/ZeroMatrixTech",
+    "repos": "https://github.com/orgs/ZeroMatrixTech/repositories",
+    "ai_note": {
+      "zh": "本公司在文档编辑、项目管理、漏洞修复、对抗测试和项目优化等环节大量使用生成式人工智能，并在验收阶段进行人工核查。请谨慎审阅我们的开源项目，发现疏漏欢迎指正。",
+      "en": "We use generative AI extensively in documentation, project management, vulnerability fixing, adversarial testing and optimization, with human review at acceptance. Please review our open-source projects carefully, and tell us about anything we missed."
+    }
+  },
+
+  "ui": {
+    "nav": [
+      { "id": "home", "file": "index.html", "zh": "首页", "en": "Home" },
+      { "id": "services", "file": "services.html", "zh": "业务服务", "en": "Services" },
+      { "id": "projects", "file": "projects.html", "zh": "项目与演示", "en": "Projects" },
+      { "id": "about", "file": "about.html", "zh": "关于我们", "en": "About" },
+      { "id": "contact", "file": "contact.html", "zh": "联系我们", "en": "Contact" }
+    ],
+    "lang_switch": { "zh": "EN", "en": "中文" },
+    "lang_switch_label": { "zh": "Switch to English", "en": "切换到中文" },
+    "theme": { "zh": "切换深色 / 浅色", "en": "Toggle dark / light" },
+    "skip": { "zh": "跳到正文", "en": "Skip to content" },
+    "all": { "zh": "全部", "en": "All" },
+    "filter": { "zh": "按方向筛选", "en": "Filter by area" },
+    "repo": { "zh": "仓库", "en": "Repository" },
+    "demo": { "zh": "演示", "en": "Demo" },
+    "open_demo": { "zh": "打开演示", "en": "Open demo" },
+    "zh_only": { "zh": "", "en": "Chinese UI" },
+    "more": { "zh": "了解更多", "en": "Learn more" },
+    "email_us": { "zh": "发邮件给我们", "en": "Email us" },
+    "copy": { "zh": "复制", "en": "Copy" },
+    "copied": { "zh": "已复制", "en": "Copied" },
+    "copy_fail": { "zh": "请手动复制", "en": "Copy manually" },
+    "footer_sitemap": { "zh": "网站导航", "en": "Site" },
+    "footer_contact": { "zh": "联系", "en": "Contact" },
+    "footer_open": { "zh": "开源", "en": "Open source" },
+    "footer_profile": { "zh": "GitHub 组织主页", "en": "GitHub organization" },
+    "footer_repos": { "zh": "全部公开仓库", "en": "All public repositories" },
+    "not_found_title": { "zh": "页面不存在", "en": "Page not found" },
+    "not_found_text": { "zh": "这个地址没有内容，可能已经移动或删除。", "en": "There is nothing at this address. It may have moved or been removed." },
+    "not_found_home": { "zh": "回到首页", "en": "Back to home" }
+  },
+
+  "categories": {
+    "protocol": { "zh": "协议与研究", "en": "Protocols & research" },
+    "app": { "zh": "应用", "en": "Applications" },
+    "system": { "zh": "系统与环境", "en": "Systems & environments" },
+    "creative": { "zh": "创意实验", "en": "Creative experiments" }
+  },
+
+  "services": [
+    {
+      "id": "devices",
+      "icon": "device",
+      "title": { "zh": "电脑销售与售后", "en": "Computer sales & support" },
+      "short": { "zh": "设备选型、配置建议与售后支持。", "en": "Device selection, configuration advice and after-sales support." },
+      "long": {
+        "zh": "这是我们的业务基础。我们从你的使用场景和预算出发给出选型与配置建议，并在交付后提供售后支持。",
+        "en": "This is the foundation of our business. We recommend devices and configurations based on how you will use them and what you can spend, and we support them after delivery."
+      },
+      "related": []
+    },
+    {
+      "id": "it",
+      "icon": "server",
+      "title": { "zh": "企业 IT 服务", "en": "Enterprise IT services" },
+      "short": { "zh": "办公设备、系统环境与日常维护的技术支持。", "en": "Technical support for office equipment, system environments and routine maintenance." },
+      "long": {
+        "zh": "围绕办公设备、操作系统环境和日常维护提供技术支持。我们自己维护的开发系统镜像 ubuntu_ZeroMatrix，就是标准化系统环境的一个例子。",
+        "en": "Technical support for office equipment, operating system environments and routine maintenance. Our own development system image, ubuntu_ZeroMatrix, is one example of a standardized environment we build and maintain."
+      },
+      "related": ["ubuntu-zeromatrix"]
+    },
+    {
+      "id": "software",
+      "icon": "code",
+      "title": { "zh": "软件开发与工程实现", "en": "Software development & engineering" },
+      "short": { "zh": "业务流程、工具开发、系统集成与自动化。", "en": "Business workflows, tools, system integration and automation." },
+      "long": {
+        "zh": "围绕业务流程、工具开发、系统集成与自动化需求探索技术方案。开源的投资研究终端 ReachTerminal 展示了我们在前后端与数据工程上的做法。",
+        "en": "We design technical solutions for business workflows, tools, system integration and automation. ReachTerminal, our open-source investment research terminal, shows how we approach frontend, backend and data engineering."
+      },
+      "related": ["reachterminal"]
+    },
+    {
+      "id": "research",
+      "icon": "flask",
+      "title": { "zh": "技术研发与协作", "en": "Research & collaboration" },
+      "short": { "zh": "软件、算法与计算基础设施研究，以及开源协作。", "en": "Software, algorithms and computing infrastructure research, and open-source collaboration." },
+      "long": {
+        "zh": "开展软件、算法与计算基础设施方面的研究，并通过文档、实验和开源协作推进。ACLt 协议与 MathPicasso 都来自这条线。",
+        "en": "Research into software, algorithms and computing infrastructure, carried forward through documentation, experiments and open-source collaboration. The ACLt protocol and MathPicasso both come from this work."
+      },
+      "related": ["aclt", "mathpicasso"]
+    }
+  ],
+
+  "process": [
+    { "zh": ["了解需求", "先了解使用场景、预算和后续维护条件。"], "en": ["Understand the need", "We start with the use case, the budget and how it will be maintained."] },
+    { "zh": ["明确范围", "确定工作范围、验收标准和支持安排。"], "en": ["Agree the scope", "We define the scope, acceptance criteria and support arrangements."] },
+    { "zh": ["清晰交付", "按双方确认的项目方案交付。"], "en": ["Deliver clearly", "We deliver against the plan both sides have confirmed."] },
+    { "zh": ["持续维护", "交付后按约定提供支持与维护。"], "en": ["Keep it running", "We provide the agreed support and maintenance after delivery."] }
+  ],
+
+  "home": {
+    "title": { "zh": "ZeroMatrixTech · 北京凌矩阵科技", "en": "ZeroMatrixTech" },
+    "description": {
+      "zh": "ZeroMatrixTech 是北京凌矩阵科技有限责任公司的对外技术品牌，提供电脑销售与售后、企业 IT 服务、软件开发与技术研发。",
+      "en": "ZeroMatrixTech is the technology brand of 北京凌矩阵科技有限责任公司, offering computer sales and support, enterprise IT services, software development and research."
+    },
+    "eyebrow": { "zh": "北京凌矩阵科技有限责任公司 · 技术品牌", "en": "A technology brand of 北京凌矩阵科技有限责任公司" },
+    "h1_html": { "zh": "从设备到系统，<br>让技术服务于实际需求。", "en": "Technology for practical needs,<br>from devices to systems." },
+    "lede": {
+      "zh": "我们以电脑销售与售后为业务基础，向企业 IT 服务、软件开发与技术服务拓展，关注实际需求、清晰交付和持续维护。",
+      "en": "Building on computer sales and after-sales support, we are expanding into enterprise IT services, software development and technical services, with a focus on practical needs, clear deliverables and ongoing maintenance."
+    },
+    "doors": [
+      {
+        "href": "services.html",
+        "kicker": { "zh": "给企业客户", "en": "For businesses" },
+        "title": { "zh": "业务服务", "en": "Services" },
+        "text": { "zh": "设备选型与售后、企业 IT 支持、软件开发与系统集成。", "en": "Device selection and support, enterprise IT, software development and integration." }
+      },
+      {
+        "href": "projects.html",
+        "kicker": { "zh": "给开发者与合作方", "en": "For developers & partners" },
+        "title": { "zh": "开源项目与演示", "en": "Open source & demos" },
+        "text": { "zh": "公开的协议、应用与系统项目，每个都能在浏览器里直接试。", "en": "Public protocol, application and system projects, each with a demo you can try in the browser." }
+      }
+    ],
+    "services_h": { "zh": "我们能做什么", "en": "What we do" },
+    "projects_h": { "zh": "公开项目", "en": "Public projects" },
+    "projects_more": { "zh": "全部项目与演示", "en": "All projects & demos" },
+    "process_h": { "zh": "合作方式", "en": "How we work" },
+    "process_note": {
+      "zh": "具体服务与交付内容以双方确认的项目方案为准。",
+      "en": "Services and deliverables are agreed for each engagement."
+    },
+    "cta_h": { "zh": "有项目想聊聊？", "en": "Have a project in mind?" },
+    "cta_text": {
+      "zh": "欢迎围绕设备与 IT 服务、软件开发、工程实现及技术研发开展交流与合作。",
+      "en": "We welcome conversations about hardware and IT services, software development, engineering and research."
+    }
+  },
+
+  "services_page": {
+    "title": { "zh": "业务服务 · ZeroMatrixTech", "en": "Services · ZeroMatrixTech" },
+    "description": { "zh": "电脑销售与售后、企业 IT 服务、软件开发与工程实现、技术研发与协作。", "en": "Computer sales and support, enterprise IT services, software development and engineering, research and collaboration." },
+    "eyebrow": { "zh": "SERVICES", "en": "SERVICES" },
+    "h1": { "zh": "业务服务", "en": "Services" },
+    "lede": {
+      "zh": "我们以电脑销售与售后为业务基础，向企业 IT 服务、软件开发与技术服务拓展。下面是四个方向，以及能说明我们做法的公开成果。",
+      "en": "Computer sales and after-sales support are our foundation, and we are expanding into enterprise IT, software development and technical services. Here are the four areas, with public work that shows how we approach them."
+    },
+    "related_h": { "zh": "相关成果", "en": "Related work" },
+    "process_h": { "zh": "合作流程", "en": "How an engagement works" },
+    "cta_h": { "zh": "说说你的需求", "en": "Tell us what you need" },
+    "cta_text": { "zh": "告诉我们使用场景、预算和时间，我们据此给出方案。", "en": "Tell us the use case, the budget and the timeline, and we will propose a plan." }
+  },
+
+  "projects_page": {
+    "title": { "zh": "项目与演示 · ZeroMatrixTech", "en": "Projects & demos · ZeroMatrixTech" },
+    "description": { "zh": "ZeroMatrixTech 的公开项目与在线演示：ACLt、ReachTerminal、ubuntu_ZeroMatrix、MathPicasso。", "en": "Public projects and live demos from ZeroMatrixTech: ACLt, ReachTerminal, ubuntu_ZeroMatrix and MathPicasso." },
+    "eyebrow": { "zh": "PROJECTS", "en": "PROJECTS" },
+    "h1": { "zh": "项目与演示", "en": "Projects & demos" },
+    "lede": {
+      "zh": "这里汇总我们的公开项目和在线演示。每个项目的成熟度、许可证和使用边界以各自仓库为准。",
+      "en": "Our public projects and live demos in one place. Each repository is the source of truth for its maturity, license and intended use."
+    },
+    "demos_h": { "zh": "在线演示", "en": "Live demos" },
+    "demos_text": { "zh": "全部在浏览器里运行，不需要安装。演示界面为中文。", "en": "All run in the browser with nothing to install. The demo interfaces are in Chinese." },
+    "featured_title": { "zh": "ACLt 像素冒险", "en": "ACLt pixel adventure" },
+    "featured_text": {
+      "zh": "跟着 Claude 跑一圈像素世界，看一个计算任务怎样从约定走到结算：剃刀与桥、冰封的约定、抽签验证、看不见的线。",
+      "en": "Follow Claude through a pixel world and watch a compute task go from commitment to settlement: the razor and the bridge, the frozen contract, verification by lottery, the invisible strings."
+    },
+    "featured_steps": {
+      "zh": ["约 2 分 30 秒，有芯片配乐和音效", "点“开始冒险”后才会出声", "空格暂停，← → 切换关卡"],
+      "en": ["About 2½ minutes, with chiptune music and sound effects", "Sound starts after you press the start button", "Space pauses, ← → switch stages"]
+    },
+    "oss_h": { "zh": "参与开源", "en": "Contributing" },
+    "oss_text": {
+      "zh": "问题反馈与技术讨论，请到对应仓库的 Issues；参与开发前，请先阅读各项目的贡献指南。",
+      "en": "For feedback and technical discussion, use the relevant repository's Issues, and read its contribution guidelines before contributing."
+    }
+  },
+
+  "about_page": {
+    "title": { "zh": "关于我们 · ZeroMatrixTech", "en": "About · ZeroMatrixTech" },
+    "description": { "zh": "ZeroMatrixTech 的公司简介与核心团队。", "en": "About ZeroMatrixTech and its core team." },
+    "eyebrow": { "zh": "ABOUT", "en": "ABOUT" },
+    "h1": { "zh": "关于我们", "en": "About us" },
+    "intro": {
+      "zh": [
+        "ZeroMatrixTech 是北京凌矩阵科技有限责任公司的对外技术品牌。团队成员具有计算机科学、计算科学、电子工程、信息工程及相关技术背景。",
+        "公司采用精简、项目驱动的协作模式，围绕技术研发、工程实现、产品与业务探索开展工作。我们以电脑销售与售后为业务基础，向企业 IT 服务、软件开发与技术服务拓展，关注实际需求、清晰交付和持续维护。"
+      ],
+      "en": [
+        "ZeroMatrixTech is the outward-facing technology brand of 北京凌矩阵科技有限责任公司. The team has backgrounds in computer science, computational science, electronic engineering, information engineering and related fields.",
+        "The company operates with a lean, project-driven structure focused on technology development, engineering implementation, product development and business exploration. Building on computer sales and after-sales support, we are expanding into enterprise IT services, software development and technical services, with a focus on practical needs, clear deliverables and ongoing maintenance."
+      ]
+    },
+    "facts": [
+      { "k": { "zh": "公司", "en": "Company" }, "v": { "zh": "北京凌矩阵科技有限责任公司", "en": "北京凌矩阵科技有限责任公司" } },
+      { "k": { "zh": "品牌", "en": "Brand" }, "v": { "zh": "ZeroMatrixTech", "en": "ZeroMatrixTech" } },
+      { "k": { "zh": "所在地", "en": "Location" }, "v": { "zh": "北京市朝阳区", "en": "Chaoyang District, Beijing" } },
+      { "k": { "zh": "协作模式", "en": "Way of working" }, "v": { "zh": "精简、项目驱动", "en": "Lean and project-driven" } }
+    ],
+    "team_h": { "zh": "核心团队", "en": "Core team" },
+    "team": [
+      {
+        "name": { "zh": "周劼", "en": "Zhou Jie" }, "initial": "周",
+        "role": { "zh": "联合创始人 · CEO", "en": "Co-founder · CEO" },
+        "text": { "zh": "负责公司整体战略、产品方向、核心技术架构与跨业务协调。", "en": "Responsible for overall strategy, product direction, core technology architecture and cross-functional coordination." }
+      },
+      {
+        "name": { "zh": "贾东明", "en": "Jia Dongming" }, "initial": "贾",
+        "role": { "zh": "联合创始人 · CTO", "en": "Co-founder · CTO" },
+        "text": { "zh": "负责技术研发、工程实现、软件质量、测试、部署与技术协作。", "en": "Responsible for technology development, engineering, software quality, testing, deployment and technical collaboration." }
+      },
+      {
+        "name": { "zh": "罗建华", "en": "Luo Jianhua" }, "initial": "罗",
+        "role": { "zh": "联合创始人 · CFO", "en": "Co-founder · CFO" },
+        "text": { "zh": "负责预算、现金流、成本控制、经营分析、资本规划以及外部财税事务协调。", "en": "Responsible for budgeting, cash-flow management, cost control, business analysis, capital planning and coordination with external finance and tax partners." }
+      }
+    ],
+    "partner_h": { "zh": "财税合作", "en": "Finance, accounting & tax partner" },
+    "partner": {
+      "name": { "zh": "北京京华京商企业管理有限公司", "en": "北京京华京商企业管理有限公司" },
+      "text": { "zh": "为公司提供会计、税务、财务报表、工商财税事务及相关合规支持。", "en": "Provides accounting, tax, financial reporting, corporate administration and related compliance support." }
+    },
+    "ai_h": { "zh": "关于生成式 AI 的说明", "en": "A note on generative AI" }
+  },
+
+  "contact_page": {
+    "title": { "zh": "联系我们 · ZeroMatrixTech", "en": "Contact · ZeroMatrixTech" },
+    "description": { "zh": "联系 ZeroMatrixTech：邮箱、地址与开源协作方式。", "en": "Contact ZeroMatrixTech: email, address and how to collaborate on open source." },
+    "eyebrow": { "zh": "CONTACT", "en": "CONTACT" },
+    "h1": { "zh": "联系我们", "en": "Contact us" },
+    "lede": {
+      "zh": "欢迎围绕设备与 IT 服务、软件开发、工程实现及技术研发开展交流与合作。",
+      "en": "We welcome conversations about hardware and IT services, software development, engineering and research."
+    },
+    "email_h": { "zh": "邮箱", "en": "Email" },
+    "address_h": { "zh": "地址", "en": "Address" },
+    "topics_h": { "zh": "选择话题，直接写邮件", "en": "Pick a topic to start an email" },
+    "topics": [
+      { "zh": ["设备与售后", "电脑采购与售后咨询"], "en": ["Devices & support", "Computer purchase and after-sales enquiry"] },
+      { "zh": ["企业 IT 服务", "企业 IT 服务咨询"], "en": ["Enterprise IT", "Enterprise IT services enquiry"] },
+      { "zh": ["软件开发合作", "软件开发合作"], "en": ["Software development", "Software development enquiry"] },
+      { "zh": ["研发与开源合作", "技术研发与开源合作"], "en": ["Research & open source", "Research and open-source collaboration"] }
+    ],
+    "topics_note": {
+      "zh": "点击后会用你的邮件客户端打开一封写好主题的新邮件；如果没有反应，请直接写信到上面的邮箱。",
+      "en": "This opens a new message with the subject filled in, in your mail app. If nothing happens, write to the address above."
+    },
+    "oss_h": { "zh": "开源项目反馈", "en": "Open-source feedback" },
+    "oss_text": {
+      "zh": "开源项目的问题反馈与技术讨论，请使用对应仓库的 Issues，方便其他人查阅和参与。",
+      "en": "For open-source feedback and technical discussion, please use the relevant repository's Issues so others can find and join the discussion."
+    }
+  },
+
+  "projects": [
+    {
+      "id": "aclt",
+      "name": "ACLt Protocol",
+      "category": "protocol",
+      "summary": {
+        "zh": "面向异构、无许可分布式计算的开放协议：任务先承诺后执行，结果靠抽样证据验证，风险有硬上限。",
+        "en": "An open, implementation-neutral protocol for heterogeneous, permissionless distributed computing: commit before you compute, verify by sampled evidence, and keep losses within hard limits."
+      },
+      "status": { "tone": "research", "zh": "G0 · 协议规格化", "en": "G0 · Specification" },
+      "tags": { "zh": ["协议规格", "Rust", "RIR", "验证模型"], "en": ["Protocol spec", "Rust", "RIR", "Verification model"] },
+      "license": { "zh": "Apache-2.0", "en": "Apache-2.0" },
+      "repo": null,
+      "repo_note": { "zh": "仓库暂未公开", "en": "Repository not yet public" },
+      "image": "assets/aclt-theater.png",
+      "image_alt": { "zh": "ACLt 像素动画开场画面", "en": "Opening frame of the ACLt pixel animation" },
+      "demo": {
+        "href": "demos/aclt-theater.html",
+        "label": { "zh": "像素动画导览", "en": "Pixel animation tour" },
+        "desc": { "zh": "跟着 Claude 跑一圈像素世界，看一个计算任务怎样从约定走到结算。约 2 分 30 秒，有配乐。", "en": "Follow Claude through a pixel world as a compute task goes from commitment to settlement. About 2½ minutes, with music." }
+      },
+      "links": []
+    },
+    {
+      "id": "reachterminal",
+      "name": "ReachTerminal",
+      "category": "app",
+      "summary": {
+        "zh": "开源、自托管的投资研究终端：基本面研究、估值、风险与数据溯源放在同一个本地工作区，不含下单代码。",
+        "en": "An open-source, self-hosted investment research terminal: fundamentals, valuation, risk and data provenance in one local workspace, with no order-submission code."
+      },
+      "status": { "tone": "alpha", "zh": "v0.1.0 alpha", "en": "v0.1.0 alpha" },
+      "tags": { "zh": ["C++20", "PostgreSQL", "Web 前端"], "en": ["C++20", "PostgreSQL", "Web frontend"] },
+      "license": { "zh": "MIT", "en": "MIT" },
+      "repo": "https://github.com/ZeroMatrixTech/ReachTerminal",
+      "image": "assets/reachterminal.png",
+      "image_alt": { "zh": "ReachTerminal 组合总览界面（合成演示数据）", "en": "ReachTerminal portfolio overview (synthetic demo data)" },
+      "note": { "zh": "截图使用合成演示数据。", "en": "Screenshot uses synthetic demo data." },
+      "demo": {
+        "href": "demos/reachterminal/index.html",
+        "label": { "zh": "在线演示", "en": "Live demo" },
+        "desc": { "zh": "真实前端 + 录制的 v0.1.0 后端响应，合成数据，只读。组合、研究、估值和压力测试都能点。", "en": "The real frontend with recorded v0.1.0 backend responses. Synthetic data, read-only. Portfolio, research, valuation and stress tests all work." }
+      },
+      "links": [
+        { "href": "https://github.com/ZeroMatrixTech/ReachTerminal/blob/main/docs/architecture.md", "zh": "架构", "en": "Architecture" },
+        { "href": "https://github.com/ZeroMatrixTech/ReachTerminal/blob/main/docs/roadmap.md", "zh": "路线图", "en": "Roadmap" }
+      ]
+    },
+    {
+      "id": "ubuntu-zeromatrix",
+      "name": "ubuntu_ZeroMatrix",
+      "category": "system",
+      "summary": {
+        "zh": "基于 Ubuntu 26.04.1 LTS 的开发系统镜像，提供虚拟机与实体机两条安装基线，预置 C++ / Python / Rust 工具链与 VS Code 工作区。",
+        "en": "A development system image based on Ubuntu 26.04.1 LTS, with VM and physical-machine install profiles and preconfigured C++ / Python / Rust toolchains and a VS Code workspace."
+      },
+      "status": { "tone": "rc", "zh": "0.2.0-rc3 · 验收中", "en": "0.2.0-rc3 · In acceptance" },
+      "tags": { "zh": ["Ubuntu", "ISO", "Make", "VS Code"], "en": ["Ubuntu", "ISO", "Make", "VS Code"] },
+      "license": { "zh": "Apache-2.0", "en": "Apache-2.0" },
+      "repo": "https://github.com/ZeroMatrixTech/ubuntu_ZeroMatrix",
+      "art": "terminal",
+      "terminal": ["git lfs pull", "make iso-vm", "make iso-physical", "make verify-iso"],
+      "demo": {
+        "href": "demos/ubuntu-zeromatrix/index.html",
+        "label": { "zh": "安装演示", "en": "Install walkthrough" },
+        "desc": { "zh": "模拟构建镜像、在启动菜单里改参数、安装和首次登录的完整流程。", "en": "A simulated walkthrough: build the image, edit boot parameters in GRUB, install, and log in for the first time." }
+      },
+      "links": [
+        { "href": "https://github.com/ZeroMatrixTech/ubuntu_ZeroMatrix/blob/main/docs/build-and-install.md", "zh": "构建与安装", "en": "Build & install" }
+      ]
+    },
+    {
+      "id": "mathpicasso",
+      "name": "MathPicasso",
+      "category": "creative",
+      "summary": {
+        "zh": "用数学函数画画：把图形作品转写为 MATLAB 数值曲线，保留颜色、定义域和隐藏状态。",
+        "en": "Drawing with mathematical functions: artworks rewritten as numeric MATLAB curves that keep their colors, domains and visibility."
+      },
+      "status": { "tone": "exp", "zh": "示例作品", "en": "Showcase" },
+      "tags": { "zh": ["MATLAB", "函数绘图"], "en": ["MATLAB", "Function plotting"] },
+      "license": { "zh": "MIT（仅代码）", "en": "MIT (code only)" },
+      "repo": "https://github.com/ZeroMatrixTech/MathPicasso",
+      "image": "assets/mathpicasso.png",
+      "image_alt": { "zh": "函数画板中的《灯塔与海》：由函数曲线组成的山、海、灯塔和帆船", "en": "“Lighthouse and Sea” in the function sketchpad: mountains, sea, a lighthouse and a boat drawn with function curves" },
+      "note": {
+        "zh": "仓库里的 Osage 示例改编自第三方作品，授权尚未确认，这里不展示；配图是函数画板的原创示例。",
+        "en": "The repository's Osage example adapts a third-party work whose license is not yet confirmed, so it is not shown here. The image is an original sketchpad example."
+      },
+      "demo": {
+        "href": "demos/mathpicasso/index.html",
+        "label": { "zh": "函数画板", "en": "Function sketchpad" },
+        "desc": { "zh": "27 条公式画出一幅《灯塔与海》，可以逐条绘制、切换墨线，也能输入自己的公式。", "en": "27 formulas draw “Lighthouse and Sea”. Replay stroke by stroke, switch to ink, or add your own formulas." }
+      },
+      "links": [
+        { "href": "https://github.com/ZeroMatrixTech/MathPicasso/blob/main/docs/formulas.md", "zh": "公式对照", "en": "Formula list" }
+      ]
+    }
+  ]
+}
