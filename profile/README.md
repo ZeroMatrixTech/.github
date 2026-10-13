@@ -11,7 +11,7 @@
 
 [About](#about) · [Projects](#projects) · [Team](#team) · [Capabilities](#capabilities) · [Contact](#contact)
 
-**[▶ 项目导航与在线演示 | Project Hub](https://zeromatrixtech.github.io/.github/)**
+**[▶ 官网与在线演示 | Website](https://zeromatrix.tenneidp.com/) · [English](https://zeromatrix.tenneidp.com/en/)**
 
 </div>
 
@@ -35,12 +35,12 @@ Building on computer sales and after-sales support, we are expanding into enterp
 
 | 项目 · Project | 简介 · Summary | 状态 · Status |
 | --- | --- | --- |
-| **ACLt Protocol** | 面向异构、无许可分布式计算的开放协议。[像素动画导览](https://zeromatrixtech.github.io/.github/demos/aclt-theater.html)<br>An open protocol for permissionless distributed computing. | G0 协议规格化（仓库暂未公开） |
-| **[ReachTerminal](https://github.com/ZeroMatrixTech/ReachTerminal)** | 开源、自托管的投资研究终端。[在线演示](https://zeromatrixtech.github.io/.github/demos/reachterminal/)<br>Self-hosted investment research terminal. | v0.1.0 alpha |
-| **[ubuntu_ZeroMatrix](https://github.com/ZeroMatrixTech/ubuntu_ZeroMatrix)** | Ubuntu 26.04.1 LTS 开发系统镜像。[安装演示](https://zeromatrixtech.github.io/.github/demos/ubuntu-zeromatrix/)<br>Ubuntu-based development system image. | 0.2.0-rc3 验收中 |
-| **[MathPicasso](https://github.com/ZeroMatrixTech/MathPicasso)** | 用数学函数画画（MATLAB）。[函数画板](https://zeromatrixtech.github.io/.github/demos/mathpicasso/)<br>Drawing with mathematical functions. | 示例作品 |
+| **ACLt Protocol** | 面向异构、无许可分布式计算的开放协议。[像素动画导览](https://zeromatrix.tenneidp.com/demos/aclt-theater.html)<br>An open protocol for permissionless distributed computing. | G0 协议规格化（仓库暂未公开） |
+| **[ReachTerminal](https://github.com/ZeroMatrixTech/ReachTerminal)** | 开源、自托管的投资研究终端。[在线演示](https://zeromatrix.tenneidp.com/demos/reachterminal/)<br>Self-hosted investment research terminal. | v0.1.0 alpha |
+| **[ubuntu_ZeroMatrix](https://github.com/ZeroMatrixTech/ubuntu_ZeroMatrix)** | Ubuntu 26.04.1 LTS 开发系统镜像。[安装演示](https://zeromatrix.tenneidp.com/demos/ubuntu-zeromatrix/)<br>Ubuntu-based development system image. | 0.2.0-rc3 验收中 |
+| **[MathPicasso](https://github.com/ZeroMatrixTech/MathPicasso)** | 用数学函数画画（MATLAB）。[函数画板](https://zeromatrix.tenneidp.com/demos/mathpicasso/)<br>Drawing with mathematical functions. | 示例作品 |
 
-四个在线演示都在浏览器里直接运行。完整的项目卡片、演示入口和文档链接见 [项目导航页](https://zeromatrixtech.github.io/.github/)。
+四个在线演示都在浏览器里直接运行。业务服务、项目与演示、团队和联系方式见 [官网](https://zeromatrix.tenneidp.com/)。
 
 <a id="team"></a>
 
