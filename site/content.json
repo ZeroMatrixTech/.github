@@ -298,24 +298,28 @@
       "name": "ReachTerminal",
       "category": "app",
       "summary": {
-        "zh": "开源、自托管的投资研究终端：基本面研究、估值、风险与数据溯源放在同一个本地工作区，不含下单代码。",
-        "en": "An open-source, self-hosted investment research terminal: fundamentals, valuation, risk and data provenance in one local workspace, with no order-submission code."
+        "zh": "开源、自托管的投资研究终端：基本面研究、估值、风险与数据溯源放在同一个本地工作区，不含下单代码。联网测试版已接入 SEC 公开财务数据与美股原始日线。",
+        "en": "An open-source, self-hosted investment research terminal: fundamentals, valuation, risk and data provenance in one local workspace, with no order-submission code. A live-data test version now connects SEC public financials and raw US daily prices."
       },
-      "status": { "tone": "alpha", "zh": "v0.1.0 alpha", "en": "v0.1.0 alpha" },
-      "tags": { "zh": ["C++20", "PostgreSQL", "Web 前端"], "en": ["C++20", "PostgreSQL", "Web frontend"] },
+      "status": { "tone": "alpha", "zh": "v0.1.0 alpha · 联网测试", "en": "v0.1.0 alpha · Live-data testing" },
+      "tags": { "zh": ["C++20", "PostgreSQL", "Web 前端", "SEC 公开数据"], "en": ["C++20", "PostgreSQL", "Web frontend", "SEC public data"] },
       "license": { "zh": "MIT", "en": "MIT" },
       "repo": "https://github.com/ZeroMatrixTech/ReachTerminal",
       "image": "assets/reachterminal.png",
       "image_alt": { "zh": "ReachTerminal 组合总览界面（合成演示数据）", "en": "ReachTerminal portfolio overview (synthetic demo data)" },
-      "note": { "zh": "截图使用合成演示数据。", "en": "Screenshot uses synthetic demo data." },
+      "note": {
+        "zh": "联网测试版已用 IBM 完成从抓取到研究页面的全链路验证，其他证券需要个人免费数据密钥。截图与在线演示仍使用合成数据：按项目约定，真实数据只保留在本机，不在网页上再分发。",
+        "en": "The live-data test version has been verified end to end with IBM; other symbols need a personal free data key. The screenshot and live demo still use synthetic data: by project policy, real data stays on the local machine and is not redistributed here."
+      },
       "demo": {
         "href": "demos/reachterminal/index.html",
         "label": { "zh": "在线演示", "en": "Live demo" },
-        "desc": { "zh": "真实前端 + 录制的 v0.1.0 后端响应，合成数据，只读。组合、研究、估值和压力测试都能点。", "en": "The real frontend with recorded v0.1.0 backend responses. Synthetic data, read-only. Portfolio, research, valuation and stress tests all work." }
+        "desc": { "zh": "真实前端 + 录制的 v0.1.0 后端响应，合成数据，只读。组合、研究、估值和压力测试都能点；联网取数需本地运行。", "en": "The real frontend with recorded v0.1.0 backend responses. Synthetic data, read-only. Portfolio, research, valuation and stress tests all work; live data fetching needs a local install." }
       },
       "links": [
         { "href": "https://github.com/ZeroMatrixTech/ReachTerminal/blob/main/docs/architecture.md", "zh": "架构", "en": "Architecture" },
-        { "href": "https://github.com/ZeroMatrixTech/ReachTerminal/blob/main/docs/roadmap.md", "zh": "路线图", "en": "Roadmap" }
+        { "href": "https://github.com/ZeroMatrixTech/ReachTerminal/blob/main/docs/roadmap.md", "zh": "路线图", "en": "Roadmap" },
+        { "href": "https://github.com/ZeroMatrixTech/ReachTerminal/blob/main/docs/live-data.md", "zh": "真实数据接入", "en": "Live data setup" }
       ]
     },
     {
