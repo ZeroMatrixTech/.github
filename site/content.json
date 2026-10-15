@@ -319,7 +319,7 @@
       "links": [
         { "href": "https://github.com/ZeroMatrixTech/ReachTerminal/blob/main/docs/architecture.md", "zh": "架构", "en": "Architecture" },
         { "href": "https://github.com/ZeroMatrixTech/ReachTerminal/blob/main/docs/roadmap.md", "zh": "路线图", "en": "Roadmap" },
-        { "href": "https://github.com/ZeroMatrixTech/ReachTerminal/blob/soft/connected-real-data/docs/live-data.md", "zh": "真实数据接入（测试分支）", "en": "Live data (test branch)" }
+        { "href": "https://github.com/ZeroMatrixTech/ReachTerminal/blob/main/docs/live-data.md", "zh": "真实数据接入", "en": "Live data setup" }
       ]
     },
     {
